@@ -54,6 +54,7 @@ public class UploadFileDAO implements IUploadFileDAO
     private static final String SQL_QUERY_FIND_BY_HISTORY = "SELECT id_upload_file,id_file,id_history  " +
         "FROM workflow_task_upload_files WHERE id_history=?";
 
+    
     /** The Constant SQL_QUERY_INSERT. */
     private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_upload_files " +
         "(id_upload_file,id_file,id_history)VALUES(?,?,?)";
@@ -131,7 +132,12 @@ public class UploadFileDAO implements IUploadFileDAO
             uploadUpload.setIdFile( daoUtil.getInt( ++nPos ) );
             uploadUpload.setIdHistory( daoUtil.getInt( ++nPos ) );
             uploadUpload.setFile( FileHome.findByPrimaryKey( uploadUpload.getIdFile(  ) ) );
-            fileList.add( uploadUpload );
+            
+            if( uploadUpload.getFile() !=null )
+            {
+            	fileList.add( uploadUpload );            	
+            }
+            
         }
 
         daoUtil.free(  );

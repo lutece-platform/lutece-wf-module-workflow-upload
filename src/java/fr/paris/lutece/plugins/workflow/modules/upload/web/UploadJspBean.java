@@ -143,10 +143,19 @@ public class UploadJspBean extends MVCAdminJspBean
         //removing list file
         List<UploadFile> listFile = FactoryDOA.getUploadFileDAO(  ).load( nIdHistory, WorkflowUtils.getPlugin(  ) );
 
-        for ( int i = 0; i < listFile.size(  ); i++ )
+        try 
         {
-            FileHome.remove( listFile.get( i ).getIdFile(  ) );
+        	   for ( int i = 0; i < listFile.size(  ); i++ )
+               {
+               
+                   FileHome.remove( listFile.get( i ).getIdFile(  ) );
+               }
         }
+        catch ( Exception e )
+        {
+        	
+        }
+     
 
         //removing UploadFile associted list File
         FactoryDOA.getUploadFileDAO(  ).deleteByHistory( nIdHistory, WorkflowUtils.getPlugin(  ) );
