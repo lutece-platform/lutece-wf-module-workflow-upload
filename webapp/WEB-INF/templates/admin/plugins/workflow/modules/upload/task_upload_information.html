@@ -24,7 +24,10 @@
       </#if>
    </div>
 </div>
-<#list list_file_uploaded as file>
-<a href="${list_url[file.idUploadFile?string]}">${file.file.title}</a>  <br/>
+<#list list_file_uploaded as file_uploaded>
+<#if file_uploaded?has_content >
+<a href="${list_url[file_uploaded.idUploadFile?string]}">${file_uploaded.file.title}</a>  <br/>
+ </#if>
+
 </#list>
 </#if>
