@@ -1,0 +1,30 @@
+<script >
+   function removeUploadValue(idHistory, idTask) 
+   {
+    var form = $('<form>', 
+       { 'action': 'jsp/admin/plugins/workflow/modules/upload/ConfirmRemoveUpload.jsp?' + 'id_history=' + idHistory + '&id_task=' + idTask + '&return_url=' + encodeURIComponent(window.location.href),
+         'method':'post'}
+       );
+       form.appendTo('body');
+       form.submit().remove();
+   }
+</script>
+<#if config?exists  && list_file_uploaded?has_content >
+<div class="clearfix">
+   <div class="pull-left">
+      <#if config.title?exists >
+      <label>${config.title} :</label>
+      </#if>
+   </div>
+   <div class="pull-right">
+      <#if has_permission_delete >
+      <a class="btn btn-danger btn-sm" href="#" onclick="removeUploadValue(${id_history}, ${task.id});return false;" title="#i18n{module.workflow.upload.button.remove_upload}">
+      <i class="fa fa-trash"></i>
+      </a>
+      </#if>
+   </div>
+</div>
+<#list list_file_uploaded as file>
+<a href="${list_url[file.idUploadFile?string]}">${file.file.title}</a>  <br/>
+</#list>
+</#if>

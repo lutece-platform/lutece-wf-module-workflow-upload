@@ -1,0 +1,42 @@
+<div class="row">
+   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border:2px solid #000000;">
+      <legend> #i18n{module.workflow.upload.task_upload_config.title}</legend>
+      <div class="form-group">
+         <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-2" for="maxFile">#i18n{module.workflow.upload.task_upload_config.label_title} * :</label>
+         <div class="input-group col-xs-12 col-sm-12 col-md-3 col-lg-3">     
+            <#if config?exists>
+            <input type="text" class="form-control" name="title" id="title" value="${config.title!}"  maxlength="255">
+            <#else>
+            <input type="text" class="form-control" name="title" id="title" value=""  maxlength="255">
+            </#if>
+            <span class="help-block">#i18n{module.workflow.upload.task_upload_config.label_title_upload}</span>
+         </div>
+      </div>
+      <div class="form-group">
+         <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-2" for="maxFile">#i18n{module.workflow.upload.task_upload_config.label_number} * :</label>
+         <div class="input-group col-xs-12 col-sm-12 col-md-3 col-lg-3">
+            <#if config?exists>
+            <input type="text" class="form-control" id="maxFile"  name="maxFile" id="maxFile" value="${config.maxFile!0}">
+            <#else>
+            <input type="text" class="form-control" id="maxFile"  name="maxFile" id="maxFile" value="0">
+            </#if>
+            <div class="input-group-addon">#i18n{module.workflow.upload.task_upload_config.label_number_upload_inline}</div>
+         </div>
+      </div>
+       <div class="form-group">
+         <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-2" >#i18n{module.workflow.upload.task_upload_config.label_mandatory} * :</label>
+         <div class="input-group col-xs-12 col-sm-12 col-md-3 col-lg-3">
+          
+            <input name="mandatory" value="true" type="radio"  <#if config?exists && config.mandatory>checked="checked"</#if> />
+          #i18n{module.workflow.upload.task_upload_config.label_yes}
+            <input name="mandatory" value="false" type="radio" <#if config?exists && !config.mandatory>checked="checked"</#if> />
+           #i18n{module.workflow.upload.task_upload_config.label_no}
+           <br/>
+ <br/>
+            <span class="help-block">#i18n{module.workflow.upload.task_upload_config.label_mandatory_upload}</span>
+         </div>
+      </div>
+   </div>
+</div>
+
+  

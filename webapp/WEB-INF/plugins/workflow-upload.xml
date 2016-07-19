@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plug-in>
+    <name>workflow-upload</name>
+    <class>fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation</class>
+    <version>1.0.0</version>
+    <documentation></documentation>
+    <installation></installation>
+    <changes></changes>
+    <user-guide></user-guide>
+    <description>module.workflow.upload.module.description</description>
+    <provider>module.workflow.upload.module.provider</provider>
+    <provider-url>http://lutece.paris.fr</provider-url>
+    <icon-url>images/admin/skin/feature_default_icon.png</icon-url>
+    <copyright>Copyright 2001-2016 Mairie de Paris</copyright>
+    <db-pool-required>1</db-pool-required>
+    
+    <core-version-dependency>
+        <min-core-version>4.1.0</min-core-version>
+        <max-core-version/>	
+    </core-version-dependency>
+
+    <!-- Admin features parameters -->
+    <admin-features>
+    </admin-features>    
+    
+    <!-- RBAC Resources -->
+	<rbac-resource-types>		
+		<rbac-resource-type>
+            <rbac-resource-type-class>
+                fr.paris.lutece.plugins.workflow.modules.upload.services.UploadResourceIdService
+            </rbac-resource-type-class>
+        </rbac-resource-type>
+	</rbac-resource-types>
+
+
+    <!-- XPages parameters -->
+    <applications>
+    </applications>
+
+    <!-- Portlet parameters -->
+    <portlets>
+   </portlets>
+   
+      <servlets>
+        <servlet>
+            <servlet-name>UploadWorkflowFileServlet</servlet-name>
+            <url-pattern>/servlet/plugins/upload/file</url-pattern>
+            <servlet-class>fr.paris.lutece.plugins.workflow.modules.upload.services.download.UploadWorkflowFileServlet</servlet-class>
+        </servlet>
+    </servlets>
+</plug-in>

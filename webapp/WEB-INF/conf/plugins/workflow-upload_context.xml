@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+   xmlns:p="http://www.springframework.org/schema/p"
+   xsi:schemaLocation="http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+   http://www.springframework.org/schema/context
+   http://www.springframework.org/schema/context/spring-context-3.0.xsd
+   http://www.springframework.org/schema/tx
+   http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+   <bean id="workflow-upload.uploadHistoryDAO" class="fr.paris.lutece.plugins.workflow.modules.upload.business.history.UploadHistoryDAO" />
+   <bean id="workflow-upload.uploadUploadDAO" class="fr.paris.lutece.plugins.workflow.modules.upload.business.file.UploadFileDAO" />
+   <bean id="workflow-upload.taskUploadAsynchronousUploadHandler" class="fr.paris.lutece.plugins.workflow.modules.upload.services.TaskUploadAsynchronousUploadHandler" />
+   <bean id="workflow-upload.taskUploadConfig" class="fr.paris.lutece.plugins.workflow.modules.upload.business.task.TaskUploadConfig" scope="prototype" />
+   <bean id="workflow-upload.taskTypeUpload" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType" 
+      p:key="taskTypeUpload"
+      p:titleI18nKey="module.workflow.upload.task_title"
+      p:beanName="workflow-upload.taskUpload"
+      p:configBeanName="workflow-upload.taskUploadConfig"
+      p:configRequired="true"
+      p:formTaskRequired="true" />
+   <bean id="workflow-upload.taskUpload" class="fr.paris.lutece.plugins.workflow.modules.upload.services.TaskUpload" scope="prototype" />
+   <bean id="workflow-upload.taskUploadConfigDAO" class="fr.paris.lutece.plugins.workflow.modules.upload.business.task.TaskUploadConfigDAO" />
+   <bean id="workflow-upload.taskUploadConfigService" class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
+      p:taskConfigDAO-ref="workflow-upload.taskUploadConfigDAO" />
+   <bean id="workflow-upload.uploadTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.upload.web.UploadTaskComponent"
+      p:taskType-ref="workflow-upload.taskTypeUpload"
+      p:taskConfigService-ref="workflow-upload.taskUploadConfigService" />
+   <bean id="workflow-upload.uploadValueService" class="fr.paris.lutece.plugins.workflow.modules.upload.services.UploadHistoryService" />
+   <!-- SignRequest -->
+   <bean id="workflow-upload.hashService"
+      class="fr.paris.lutece.util.signrequest.security.Sha1HashService" />
+   <bean id="workflow-upload.requestAuthentication"
+      class="fr.paris.lutece.util.signrequest.RequestHashAuthenticator">
+      <property name="hashService" ref="workflow-upload.hashService" />
+      <property name="signatureElements">
+         <list>
+            <value>id_file</value>
+         </list>
+      </property>
+      <property name="privateKey">
+         <value>wkFileDownload</value>
+      </property>
+   </bean>
+</beans>
