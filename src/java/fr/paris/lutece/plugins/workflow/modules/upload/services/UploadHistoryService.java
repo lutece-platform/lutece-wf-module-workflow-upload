@@ -55,7 +55,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-
+import fr.paris.lutece.util.sql.TransactionManager;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -92,7 +92,7 @@ public class UploadHistoryService implements IUploadHistoryService
     @Transactional( "workflow.transactionManager" )
     public void create( int nIdResourceHistory, int nidTask, List<FileItem> listFiles, Plugin plugin )
     {
-    	
+    	TransactionManager.beginTransaction( WorkflowUtils.getPlugin(  ) );
     	   for ( FileItem fileitem : listFiles )
            {
                File file = buildFileWithPhysicalFile( fileitem );
@@ -110,6 +110,8 @@ public class UploadHistoryService implements IUploadHistoryService
            uploadValue.setIdTask( nidTask );
     	   
         getUploadHistoryDAO(  ).insert( uploadValue, plugin );
+        
+        TransactionManager.rollBack( WorkflowUtils.getPlugin(  ) );
     }
 
     /**

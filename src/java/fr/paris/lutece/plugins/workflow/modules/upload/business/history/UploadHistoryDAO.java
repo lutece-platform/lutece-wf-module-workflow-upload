@@ -86,7 +86,7 @@ public class UploadHistoryDAO implements IUploadHistoryDAO
         int nPos = 0;
         daoUtil.setInt( ++nPos, nIdHistory );
         daoUtil.setInt( ++nPos, nIdTask );
-
+        
         nPos = 0;
 
         daoUtil.executeQuery(  );
