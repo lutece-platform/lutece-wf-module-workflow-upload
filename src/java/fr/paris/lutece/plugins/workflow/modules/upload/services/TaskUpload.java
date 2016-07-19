@@ -33,18 +33,14 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.upload.services;
 
-import fr.paris.lutece.plugins.workflow.modules.upload.business.file.UploadFile;
-import fr.paris.lutece.plugins.workflow.modules.upload.business.history.UploadHistory;
+
 import fr.paris.lutece.plugins.workflow.modules.upload.business.task.TaskUploadConfig;
-import fr.paris.lutece.plugins.workflow.modules.upload.factory.FactoryDOA;
+
 import fr.paris.lutece.plugins.workflow.modules.upload.factory.FactoryService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.Task;
-import fr.paris.lutece.portal.business.file.File;
-import fr.paris.lutece.portal.business.file.FileHome;
-import fr.paris.lutece.portal.business.physicalfile.PhysicalFile;
-import fr.paris.lutece.util.filesystem.FileSystemUtil;
+
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
@@ -82,26 +78,6 @@ public class TaskUpload extends Task
     }
 
     /**
-     * Builds the file with physical file.
-     *
-     * @param fileItem the file item
-     * @return the file
-     */
-    private File buildFileWithPhysicalFile( FileItem fileItem )
-    {
-        File file = new File(  );
-        file.setTitle( fileItem.getName(  ) );
-        file.setSize( ( fileItem.getSize(  ) < Integer.MAX_VALUE ) ? (int) fileItem.getSize(  ) : Integer.MAX_VALUE );
-        file.setMimeType( FileSystemUtil.getMIMEType( file.getTitle(  ) ) );
-
-        PhysicalFile physicalFile = new PhysicalFile(  );
-        physicalFile.setValue( fileItem.get(  ) );
-        file.setPhysicalFile( physicalFile );
-
-        return file;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -113,22 +89,8 @@ public class TaskUpload extends Task
                                                                       .getListUploadedFiles( strUploadValue,
                 request.getSession(  ) );
 
-        for ( FileItem fileitem : listFiles )
-        {
-            File file = buildFileWithPhysicalFile( fileitem );
-            int nidFile = FileHome.create( file );
 
-            UploadFile uploadFile = new UploadFile(  );
-            uploadFile.setIdFile( nidFile );
-            uploadFile.setIdHistory( nIdResourceHistory );
-
-            FactoryDOA.getUploadFileDAO(  ).insert( uploadFile, WorkflowUtils.getPlugin(  ) );
-        }
-
-        UploadHistory uploadValue = new UploadHistory(  );
-        uploadValue.setIdResourceHistory( nIdResourceHistory );
-        uploadValue.setIdTask( this.getId(  ) );
-        FactoryService.getHistoryService(  ).create( uploadValue, WorkflowUtils.getPlugin(  ) );
+        FactoryService.getHistoryService(  ).create( nIdResourceHistory, this.getId(  ), listFiles, WorkflowUtils.getPlugin(  ) );
 
         TaskUploadAsynchronousUploadHandler.getHandler(  ).removeSessionFiles( request.getSession(  ).getId(  ) );
     }

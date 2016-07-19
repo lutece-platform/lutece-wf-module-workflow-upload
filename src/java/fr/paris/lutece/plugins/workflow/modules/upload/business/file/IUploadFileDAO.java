@@ -37,8 +37,6 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
-
 
 // TODO: Auto-generated Javadoc
 /**
@@ -55,7 +53,7 @@ public interface IUploadFileDAO
      * @param upload the upload
      * @param plugin the plugin
      */
-    @Transactional( "workflow.transactionManager" )
+  
     void insert( UploadFile upload, Plugin plugin );
 
     /**
@@ -65,7 +63,7 @@ public interface IUploadFileDAO
      * @param plugin the plugin
      * @return the list
      */
-    @Transactional( "workflow.transactionManager" )
+  
     List<UploadFile> load( int nIdUpload, Plugin plugin );
 
     /**
@@ -74,7 +72,7 @@ public interface IUploadFileDAO
      * @param nIdUpload the n id upload
      * @param plugin the plugin
      */
-    @Transactional( "workflow.transactionManager" )
+   
     void deleteByHistory( int nIdUpload, Plugin plugin );
 
     /**
@@ -83,6 +81,6 @@ public interface IUploadFileDAO
      * @param nIdFile the n id file
      * @param plugin the plugin
      */
-    @Transactional( "workflow.transactionManager" )
+  
     void deleteByFile( int nIdFile, Plugin plugin );
 }

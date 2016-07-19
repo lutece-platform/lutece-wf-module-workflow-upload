@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.upload.business.history;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
 
@@ -63,7 +61,6 @@ public class UploadHistoryDAO implements IUploadHistoryDAO
      * {@inheritDoc}
      */
     @Override
-    @Transactional( "workflow.transactionManager" )
     public synchronized void insert( UploadHistory history, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
@@ -80,8 +77,7 @@ public class UploadHistoryDAO implements IUploadHistoryDAO
     /**
      * {@inheritDoc}
      */
-    @Override
-    @Transactional( "workflow.transactionManager" )
+    @Override 
     public UploadHistory load( int nIdHistory, int nIdTask, Plugin plugin )
     {
         UploadHistory uploadHistory = null;
@@ -111,7 +107,6 @@ public class UploadHistoryDAO implements IUploadHistoryDAO
      * {@inheritDoc}
      */
     @Override
-    @Transactional( "workflow.transactionManager" )
     public void deleteByHistory( int nIdHistory, int nIdTask, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, plugin );
@@ -126,8 +121,7 @@ public class UploadHistoryDAO implements IUploadHistoryDAO
     /**
      * {@inheritDoc}
      */
-    @Override
-    @Transactional( "workflow.transactionManager" )
+    @Override  
     public void deleteByTask( int nIdTask, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, plugin );
