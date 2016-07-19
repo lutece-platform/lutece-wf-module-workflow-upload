@@ -40,6 +40,8 @@ import fr.paris.lutece.util.sql.DAOUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
+
 
 // TODO: Auto-generated Javadoc
 /**
@@ -91,6 +93,7 @@ public class UploadFileDAO implements IUploadFileDAO
      * {@inheritDoc}
      */
     @Override
+    @Transactional( "workflow.transactionManager" )
     public synchronized void insert( UploadFile upload, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
@@ -111,6 +114,7 @@ public class UploadFileDAO implements IUploadFileDAO
      * {@inheritDoc}
      */
     @Override
+    @Transactional( "workflow.transactionManager" )
     public List<UploadFile> load( int nIdHistory, Plugin plugin )
     {
         UploadFile uploadUpload = null;
@@ -143,6 +147,7 @@ public class UploadFileDAO implements IUploadFileDAO
      * {@inheritDoc}
      */
     @Override
+    @Transactional( "workflow.transactionManager" )
     public void deleteByHistory( int nIdHistory, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, plugin );
@@ -157,6 +162,7 @@ public class UploadFileDAO implements IUploadFileDAO
      * {@inheritDoc}
      */
     @Override
+    @Transactional( "workflow.transactionManager" )
     public void deleteByFile( int nIdFile, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_FILE, plugin );

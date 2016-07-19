@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.upload.business.history;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import fr.paris.lutece.portal.service.plugin.Plugin;
 
 
@@ -51,6 +53,7 @@ public interface IUploadHistoryDAO
      * @param history the history
      * @param plugin the plugin
      */
+    @Transactional( "workflow.transactionManager" )
     void insert( UploadHistory history, Plugin plugin );
 
     /**
@@ -61,6 +64,7 @@ public interface IUploadHistoryDAO
      * @param plugin the plugin
      * @return the upload history
      */
+    @Transactional( "workflow.transactionManager" )
     UploadHistory load( int nIdHistory, int nIdTask, Plugin plugin );
 
     /**
@@ -70,6 +74,7 @@ public interface IUploadHistoryDAO
      * @param nIdTask the n id task
      * @param plugin the plugin
      */
+    @Transactional( "workflow.transactionManager" )
     void deleteByHistory( int nIdHistory, int nIdTask, Plugin plugin );
 
     /**
@@ -78,5 +83,6 @@ public interface IUploadHistoryDAO
      * @param nIdTask the n id task
      * @param plugin the plugin
      */
+    @Transactional( "workflow.transactionManager" )
     void deleteByTask( int nIdTask, Plugin plugin );
 }
