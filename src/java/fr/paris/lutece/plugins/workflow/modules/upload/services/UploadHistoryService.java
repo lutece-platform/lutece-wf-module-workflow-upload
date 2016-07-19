@@ -111,7 +111,7 @@ public class UploadHistoryService implements IUploadHistoryService
     	   
         getUploadHistoryDAO(  ).insert( uploadValue, plugin );
         
-        TransactionManager.rollBack( WorkflowUtils.getPlugin(  ) );
+        TransactionManager.commitTransaction( WorkflowUtils.getPlugin(  ) );
     }
 
     /**
