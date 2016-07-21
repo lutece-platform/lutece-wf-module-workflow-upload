@@ -45,9 +45,9 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class TaskUploadConfigDAO implements ITaskConfigDAO<TaskUploadConfig>
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,max_file,title,is_mandatory FROM workflow_task_upload_config  WHERE id_task=?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_upload_config  (id_task,max_file,title,is_mandatory)VALUES(?,?,?,?)";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_upload_config SET id_task=?,max_file=?, title= ?, is_mandatory=? WHERE id_task=?";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task,max_file,max_size_file,title,is_mandatory FROM workflow_task_upload_config  WHERE id_task=?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_upload_config  (id_task,max_file,max_size_file,title,is_mandatory)VALUES(?,?,?,?,?)";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_upload_config SET id_task=?,max_file=?, max_size_file=?, title= ?, is_mandatory=? WHERE id_task=?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task_upload_config  WHERE id_task=? ";
 
     /**
@@ -62,6 +62,7 @@ public class TaskUploadConfigDAO implements ITaskConfigDAO<TaskUploadConfig>
 
         daoUtil.setInt( ++nPos, config.getIdTask(  ) );
         daoUtil.setInt( ++nPos, config.getMaxFile(  ) );
+        daoUtil.setInt( ++nPos, config.getMaxSizeFile(  ) );
         daoUtil.setString( ++nPos, config.getTitle(  ) );
         daoUtil.setBoolean( ++nPos, config.isMandatory(  ) );
 
@@ -81,6 +82,7 @@ public class TaskUploadConfigDAO implements ITaskConfigDAO<TaskUploadConfig>
 
         daoUtil.setInt( ++nPos, config.getIdTask(  ) );
         daoUtil.setInt( ++nPos, config.getMaxFile(  ) );
+        daoUtil.setInt( ++nPos, config.getMaxSizeFile(  ) );
         daoUtil.setString( ++nPos, config.getTitle(  ) );
         daoUtil.setBoolean( ++nPos, config.isMandatory(  ) );
 
@@ -109,6 +111,7 @@ public class TaskUploadConfigDAO implements ITaskConfigDAO<TaskUploadConfig>
             config = new TaskUploadConfig(  );
             config.setIdTask( daoUtil.getInt( ++nPos ) );
             config.setMaxFile( daoUtil.getInt( ++nPos ) );
+            config.setMaxSizeFile( daoUtil.getInt( ++nPos ) );
             config.setTitle( daoUtil.getString( ++nPos ) );
             config.setMandatory( daoUtil.getBoolean( ++nPos ) );
         }

@@ -68,7 +68,8 @@ public class TaskUploadAsynchronousUploadHandler extends AbstractAsynchronousUpl
 
     // Error messages
     private static final String ERROR_MESSAGE_UNKNOWN_ERROR = "module.workflow.upload.message.unknownError";
-    private static final String ERROR_MESSAGE_TO_MANY_FILE = "module.workflow.upload.message.tomamyFile";
+    private static final String ERROR_MESSAGE_MAX_FILE = "module.workflow.upload.message.error.uploading_file.max_files";
+    private static final String ERROR_MESSAGE_MAX_size_FILE = "module.workflow.upload.message.error.uploading_file.file_max_size";
     private static final String BEAN_TASK_ASYNCHRONOUS_UPLOAD_HANDLER = "workflow-upload.taskUploadAsynchronousUploadHandler";
 
     /** <sessionId,<fieldName,fileItems>> */
@@ -108,13 +109,30 @@ public class TaskUploadAsynchronousUploadHandler extends AbstractAsynchronousUpl
             TaskUploadConfig config = _taskUploadConfigService.findByPrimaryKey( Integer.valueOf( strTask ) );
 
             List<FileItem> list = getListUploadedFiles( strFieldName, request.getSession(  ) );
+            long size = 0;
+
+            for ( FileItem fileItem : listFileItemsToUpload )
+            {
+                if ( fileItem.getSize(  ) > ( config.getMaxSizeFile(  ) * 1000000 ) )
+                {
+                    size = fileItem.getSize(  );
+
+                    break;
+                }
+            }
+
+            if ( size > 0 )
+            {
+                Object[] tabRequiredFields = { config.getMaxSizeFile(  ) };
+
+                return I18nService.getLocalizedString( ERROR_MESSAGE_MAX_size_FILE, tabRequiredFields, locale );
+            }
 
             if ( config.getMaxFile(  ) <= list.size(  ) )
             {
-                Object[] params = new Object[1];
-                params[0] = config.getMaxFile(  );
+                Object[] tabRequiredFields = { config.getMaxFile(  ) };
 
-                return I18nService.getLocalizedString( ERROR_MESSAGE_TO_MANY_FILE, params, locale );
+                return I18nService.getLocalizedString( ERROR_MESSAGE_MAX_FILE, tabRequiredFields, locale );
             }
 
             //  _taskUploadConfigService. 

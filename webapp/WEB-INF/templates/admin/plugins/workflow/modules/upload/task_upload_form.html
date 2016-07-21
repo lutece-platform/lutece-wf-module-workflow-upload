@@ -1,12 +1,20 @@
 <#include "/skin/plugins/asynchronousupload/upload_commons.html" />
 <div class="form-group">
    <#if config?exists>
-   <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="upload_title">${config.title!"title missed"} :</label>
-   <div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">
-      <@addFileInputAndfilesBox upload_value handler listUploadedFiles '' true />
+   <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="upload_title">${config.title!"title missed"} <#if config.mandatory>*</#if> :</label>
+   <div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">       
+       <@addFileInput upload_value handler '' true  />
+       <div id="listUpload">
+           <@addUploadedFilesBox upload_value handler listUploadedFiles />
+       </div>
+     
       </#if>
       <p class="help-block"></p>
    </div>
 </div>
 <@addRequiredJsFiles />
 <script type="text/javascript" src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=taskUploadAsynchronousUploadHandler" ></script>
+<script>
+/*HACK for firefox*/
+$("#listUpload  button[type='submit']").attr("onclick","return false;");
+</script>

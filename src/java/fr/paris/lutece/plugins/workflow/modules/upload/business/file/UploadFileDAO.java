@@ -53,8 +53,9 @@ public class UploadFileDAO implements IUploadFileDAO
     /** The Constant SQL_QUERY_FIND_BY_HISTORY. */
     private static final String SQL_QUERY_FIND_BY_HISTORY = "SELECT id_upload_file,id_file,id_history  " +
         "FROM workflow_task_upload_files WHERE id_history=?";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_upload_file,id_file,id_history  " +
+        "FROM workflow_task_upload_files WHERE id_upload_file=?";
 
-    
     /** The Constant SQL_QUERY_INSERT. */
     private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_upload_files " +
         "(id_upload_file,id_file,id_history)VALUES(?,?,?)";
@@ -63,7 +64,7 @@ public class UploadFileDAO implements IUploadFileDAO
     private static final String SQL_QUERY_DELETE_BY_HISTORY = "DELETE FROM workflow_task_upload_files  WHERE id_history=?";
 
     /** The Constant SQL_QUERY_DELETE_BY_FILE. */
-    private static final String SQL_QUERY_DELETE_BY_FILE = "DELETE FROM workflow_task_upload_files  WHERE id_file=?";
+    private static final String SQL_QUERY_DELETE_BY_ID = "DELETE FROM workflow_task_upload_files  WHERE id_upload_file=?";
 
     /**
      * Generates a new primary key.
@@ -91,7 +92,7 @@ public class UploadFileDAO implements IUploadFileDAO
     /**
      * {@inheritDoc}
      */
-    @Override   
+    @Override
     public synchronized void insert( UploadFile upload, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
@@ -111,7 +112,7 @@ public class UploadFileDAO implements IUploadFileDAO
     /**
      * {@inheritDoc}
      */
-    @Override 
+    @Override
     public List<UploadFile> load( int nIdHistory, Plugin plugin )
     {
         UploadFile uploadUpload = null;
@@ -132,12 +133,11 @@ public class UploadFileDAO implements IUploadFileDAO
             uploadUpload.setIdFile( daoUtil.getInt( ++nPos ) );
             uploadUpload.setIdHistory( daoUtil.getInt( ++nPos ) );
             uploadUpload.setFile( FileHome.findByPrimaryKey( uploadUpload.getIdFile(  ) ) );
-            
-            if( uploadUpload.getFile() !=null )
+
+            if ( uploadUpload.getFile(  ) != null )
             {
-            	fileList.add( uploadUpload );            	
+                fileList.add( uploadUpload );
             }
-            
         }
 
         daoUtil.free(  );
@@ -148,7 +148,7 @@ public class UploadFileDAO implements IUploadFileDAO
     /**
      * {@inheritDoc}
      */
-    @Override 
+    @Override
     public void deleteByHistory( int nIdHistory, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, plugin );
@@ -162,13 +162,39 @@ public class UploadFileDAO implements IUploadFileDAO
     /**
      * {@inheritDoc}
      */
-    @Override  
-    public void deleteByFile( int nIdFile, Plugin plugin )
+    @Override
+    public void deleteByid( int nIdFileUpload, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_FILE, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_ID, plugin );
         int nPos = 0;
-        daoUtil.setInt( ++nPos, nIdFile );
+        daoUtil.setInt( ++nPos, nIdFileUpload );
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
+    }
+
+    @Override
+    public UploadFile findbyprimaryKey( int nIdFileUpload, Plugin plugin )
+    {
+        UploadFile uploadUpload = null;
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin );
+        int nPos = 0;
+        daoUtil.setInt( ++nPos, nIdFileUpload );
+
+        daoUtil.executeQuery(  );
+
+        nPos = 0;
+
+        if ( daoUtil.next(  ) )
+        {
+            uploadUpload = new UploadFile(  );
+            uploadUpload.setIdUploadFile( daoUtil.getInt( ++nPos ) );
+            uploadUpload.setIdFile( daoUtil.getInt( ++nPos ) );
+            uploadUpload.setIdHistory( daoUtil.getInt( ++nPos ) );
+            uploadUpload.setFile( FileHome.findByPrimaryKey( uploadUpload.getIdFile(  ) ) );
+        }
+
+        daoUtil.free(  );
+
+        return uploadUpload;
     }
 }

@@ -42,14 +42,12 @@ import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 public class TaskUploadConfig extends TaskConfig
 {
     /** The _n max file. */
-    // Variables declarations 
     private int _nMaxFile;
-
-    /** The _str title. */
     private String _strTitle;
 
     /** The _b mandatory. */
     private boolean _bMandatory;
+    private int _nMaxSizeFile;
 
     /**
      * Gets the title.
@@ -109,5 +107,25 @@ public class TaskUploadConfig extends TaskConfig
     public void setMandatory( boolean bMandatory )
     {
         _bMandatory = bMandatory;
+    }
+
+    /**
+     * Gets the max size file.
+     *
+     * @return the max size file
+     */
+    public int getMaxSizeFile(  )
+    {
+        return _nMaxSizeFile;
+    }
+
+    /**
+     * Sets the max size file.
+     *
+     * @param nMaxSizeFile the new max size file
+     */
+    public void setMaxSizeFile( int nMaxSizeFile )
+    {
+        _nMaxSizeFile = nMaxSizeFile;
     }
 }

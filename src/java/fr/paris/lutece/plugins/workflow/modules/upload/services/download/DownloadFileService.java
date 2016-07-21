@@ -49,7 +49,7 @@ public final class DownloadFileService
     public static final String PARAMETER_ID_FILE = "id_file";
     public static final String PARAMETER_SIGNATURE = "signature";
     public static final String PARAMETER_ID_TIMETAMP = "timestamp";
-    public static final String URL_SERVLET = "servlet/plugins/upload/file";
+    public static final String URL_SERVLET = "servlet/plugins/workflow/modules/upload/file";
 
     /**
      * Instantiates a new download file service.

@@ -77,7 +77,7 @@ public class UploadHistoryDAO implements IUploadHistoryDAO
     /**
      * {@inheritDoc}
      */
-    @Override 
+    @Override
     public UploadHistory load( int nIdHistory, int nIdTask, Plugin plugin )
     {
         UploadHistory uploadHistory = null;
@@ -86,7 +86,7 @@ public class UploadHistoryDAO implements IUploadHistoryDAO
         int nPos = 0;
         daoUtil.setInt( ++nPos, nIdHistory );
         daoUtil.setInt( ++nPos, nIdTask );
-        
+
         nPos = 0;
 
         daoUtil.executeQuery(  );
@@ -121,7 +121,7 @@ public class UploadHistoryDAO implements IUploadHistoryDAO
     /**
      * {@inheritDoc}
      */
-    @Override  
+    @Override
     public void deleteByTask( int nIdTask, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, plugin );

@@ -53,18 +53,25 @@ public interface IUploadFileDAO
      * @param upload the upload
      * @param plugin the plugin
      */
-  
     void insert( UploadFile upload, Plugin plugin );
+
+    /**
+     * Findbyprimary key.
+     *
+     * @param nIdFileUpload the n id file upload
+     * @param plugin the plugin
+     * @return the upload file
+     */
+    UploadFile findbyprimaryKey( int nIdFileUpload, Plugin plugin );
 
     /**
      * Load.
      *
-     * @param nIdUpload the n id upload
+     * @param nIdHistory the n id upload
      * @param plugin the plugin
      * @return the list
      */
-  
-    List<UploadFile> load( int nIdUpload, Plugin plugin );
+    List<UploadFile> load( int nIdHistory, Plugin plugin );
 
     /**
      * Delete by history.
@@ -72,15 +79,13 @@ public interface IUploadFileDAO
      * @param nIdUpload the n id upload
      * @param plugin the plugin
      */
-   
     void deleteByHistory( int nIdUpload, Plugin plugin );
 
     /**
      * Delete by file.
      *
-     * @param nIdFile the n id file
+     * @param nIdUpload the n id file
      * @param plugin the plugin
      */
-  
-    void deleteByFile( int nIdFile, Plugin plugin );
+    void deleteByid( int nIdUpload, Plugin plugin );
 }

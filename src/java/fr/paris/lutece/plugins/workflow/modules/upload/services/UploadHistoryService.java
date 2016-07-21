@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.upload.services;
 
-import java.util.List;
-
 import fr.paris.lutece.plugins.workflow.modules.upload.business.file.UploadFile;
 import fr.paris.lutece.plugins.workflow.modules.upload.business.history.IUploadHistoryDAO;
 import fr.paris.lutece.plugins.workflow.modules.upload.business.history.UploadHistory;
@@ -52,7 +50,10 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.filesystem.FileSystemUtil;
 
 import org.apache.commons.fileupload.FileItem;
+
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -92,26 +93,23 @@ public class UploadHistoryService implements IUploadHistoryService
     @Transactional( "workflow.transactionManager" )
     public void create( int nIdResourceHistory, int nidTask, List<FileItem> listFiles, Plugin plugin )
     {
-    	
-    	   for ( FileItem fileitem : listFiles )
-           {
-               File file = buildFileWithPhysicalFile( fileitem );
-               int nidFile = FileHome.create( file );
+        for ( FileItem fileitem : listFiles )
+        {
+            File file = buildFileWithPhysicalFile( fileitem );
+            int nidFile = FileHome.create( file );
 
-               UploadFile uploadFile = new UploadFile(  );
-               uploadFile.setIdFile( nidFile );
-               uploadFile.setIdHistory( nIdResourceHistory );
+            UploadFile uploadFile = new UploadFile(  );
+            uploadFile.setIdFile( nidFile );
+            uploadFile.setIdHistory( nIdResourceHistory );
 
-               FactoryDOA.getUploadFileDAO(  ).insert( uploadFile, WorkflowUtils.getPlugin(  ) );
-           }
-    	   
-    	   UploadHistory uploadValue = new UploadHistory(  );
-           uploadValue.setIdResourceHistory( nIdResourceHistory );
-           uploadValue.setIdTask( nidTask );
-    	   
+            FactoryDOA.getUploadFileDAO(  ).insert( uploadFile, WorkflowUtils.getPlugin(  ) );
+        }
+
+        UploadHistory uploadValue = new UploadHistory(  );
+        uploadValue.setIdResourceHistory( nIdResourceHistory );
+        uploadValue.setIdTask( nidTask );
+
         getUploadHistoryDAO(  ).insert( uploadValue, plugin );
-        
-       
     }
 
     /**
@@ -154,7 +152,7 @@ public class UploadHistoryService implements IUploadHistoryService
 
         return userOwner.getUserId(  ) == adminUser.getUserId(  );
     }
-    
+
     /**
      * Builds the file with physical file.
      *

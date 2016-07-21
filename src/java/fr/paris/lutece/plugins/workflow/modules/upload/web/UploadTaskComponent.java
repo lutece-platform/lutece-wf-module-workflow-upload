@@ -43,6 +43,7 @@ import fr.paris.lutece.plugins.workflow.modules.upload.services.UploadResourceId
 import fr.paris.lutece.plugins.workflow.modules.upload.services.download.DownloadFileService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflow.web.task.AbstractTaskComponent;
+import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
@@ -55,6 +56,7 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.xml.XmlUtil;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -95,8 +97,63 @@ public class UploadTaskComponent extends AbstractTaskComponent
     private static final String PARAMETER_UPLOAD_VALUE = "upload_value";
 
     // MESSAGES
+    private static final String MESSAGE_VALIDATION_CONFIG_TITLE_REQUIRED = "module.workflow.upload.validation.taskuploadconfig.Title.notEmpty";
+    private static final String MESSAGE_VALIDATION_CONFIG_TITLE_SIZE = "module.workflow.upload.validation.taskuploadconfig.Title.size";
+    private static final String MESSAGE_VALIDATION_CONFIG_SIZE_FILE = "module.workflow.upload.validation.taskuploadconfig.MaxSizeFile.minValue";
+    private static final String MESSAGE_VALIDATION_CONFIG_NUMBER_MAX_FILE = "module.workflow.upload.validation.taskuploadconfig.MaxFile.minValue";
     private static final String MESSAGE_MANDATORY_FIELD = "module.workflow.upload.task_upload_config.message.mandatory.field";
     private static final String MESSAGE_NO_CONFIGURATION_FOR_TASK_UPLOAD = "module.workflow.upload.task_upload_config.message.no_configuration_for_task_upload";
+
+    @Override
+    public String validateConfig( ITaskConfig config, HttpServletRequest request )
+    {
+        String strTitle = request.getParameter( "title" );
+        String strMaxSizeFile = request.getParameter( "maxSizeFile" );
+        String strMaxFile = request.getParameter( "maxFile" );
+
+        int nNumberSize = -1;
+        int nNumberFile = -1;
+
+        try
+        {
+            nNumberSize = Integer.valueOf( strMaxSizeFile );
+            nNumberFile = Integer.valueOf( strMaxFile );
+        }
+        catch ( Exception e )
+        {
+        }
+
+        String strMessageError = StringUtils.EMPTY;
+
+        if ( StringUtils.isBlank( strTitle ) )
+        {
+            strMessageError = MESSAGE_VALIDATION_CONFIG_TITLE_REQUIRED;
+        }
+        else
+        {
+            if ( strTitle.length(  ) > 255 )
+            {
+                strMessageError = MESSAGE_VALIDATION_CONFIG_TITLE_SIZE;
+            }
+        }
+
+        if ( nNumberSize <= 0 )
+        {
+            strMessageError = MESSAGE_VALIDATION_CONFIG_SIZE_FILE;
+        }
+
+        if ( nNumberFile <= 0 )
+        {
+            strMessageError = MESSAGE_VALIDATION_CONFIG_NUMBER_MAX_FILE;
+        }
+
+        if ( StringUtils.isNotBlank( strMessageError ) )
+        {
+            return AdminMessageService.getMessageUrl( request, strMessageError, AdminMessage.TYPE_STOP );
+        }
+
+        return strMessageError;
+    }
 
     /**
      * {@inheritDoc}

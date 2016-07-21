@@ -54,8 +54,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -74,6 +72,7 @@ public class UploadJspBean extends MVCAdminJspBean
 
     /** The Constant PARAMETER_ID_TASK. */
     private static final String PARAMETER_ID_TASK = "id_task";
+    private static final String PARAMETER_ID_FILE_UPLOAD = "id_file_upload";
 
     /** The Constant PARAMETER_RETURN_URL. */
     private static final String PARAMETER_RETURN_URL = "return_url";
@@ -106,12 +105,14 @@ public class UploadJspBean extends MVCAdminJspBean
             throw new AccessDeniedException( "The connected user is not allowed to delete this upload" );
         }
 
+        String strIdFileUpload = request.getParameter( PARAMETER_ID_FILE_UPLOAD );
         String strIdHistory = request.getParameter( PARAMETER_ID_HISTORY );
         String strIdTask = request.getParameter( PARAMETER_ID_TASK );
         String strReturnUrl = request.getParameter( PARAMETER_RETURN_URL );
 
         UrlItem url = new UrlItem( JSP_DO_REMOVE_UPLOAD );
         url.addParameter( PARAMETER_ID_HISTORY, strIdHistory );
+        url.addParameter( PARAMETER_ID_FILE_UPLOAD, strIdFileUpload );
         url.addParameter( PARAMETER_ID_TASK, strIdTask );
         url.addParameter( PARAMETER_RETURN_URL, URLEncoder.encode( strReturnUrl, PARAMETER_ENCODING ) );
 
@@ -135,33 +136,22 @@ public class UploadJspBean extends MVCAdminJspBean
             throw new AccessDeniedException( "The connected user is not allowed to delete this upload" );
         }
 
+        String strIdFileUpload = request.getParameter( PARAMETER_ID_FILE_UPLOAD );
+        int nIdFileUpload = WorkflowUtils.convertStringToInt( strIdFileUpload );
         String strIdHistory = request.getParameter( PARAMETER_ID_HISTORY );
         int nIdHistory = WorkflowUtils.convertStringToInt( strIdHistory );
         String strIdTask = request.getParameter( PARAMETER_ID_TASK );
         int nIdTask = WorkflowUtils.convertStringToInt( strIdTask );
 
         //removing list file
-        List<UploadFile> listFile = FactoryDOA.getUploadFileDAO(  ).load( nIdHistory, WorkflowUtils.getPlugin(  ) );
+        UploadFile uploadFile = FactoryDOA.getUploadFileDAO(  )
+                                          .findbyprimaryKey( nIdFileUpload, WorkflowUtils.getPlugin(  ) );
 
-        try 
+        if ( uploadFile != null )
         {
-        	   for ( int i = 0; i < listFile.size(  ); i++ )
-               {
-               
-                   FileHome.remove( listFile.get( i ).getIdFile(  ) );
-               }
+            FileHome.remove( uploadFile.getIdFile(  ) );
+            FactoryDOA.getUploadFileDAO(  ).deleteByid( nIdFileUpload, WorkflowUtils.getPlugin(  ) );
         }
-        catch ( Exception e )
-        {
-        	
-        }
-     
-
-        //removing UploadFile associted list File
-        FactoryDOA.getUploadFileDAO(  ).deleteByHistory( nIdHistory, WorkflowUtils.getPlugin(  ) );
-
-        //remove history
-        FactoryService.getHistoryService(  ).removeByHistory( nIdHistory, nIdTask, WorkflowUtils.getPlugin(  ) );
 
         return URLDecoder.decode( request.getParameter( PARAMETER_RETURN_URL ), PARAMETER_ENCODING );
     }

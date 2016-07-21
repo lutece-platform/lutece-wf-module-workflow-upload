@@ -33,14 +33,11 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.upload.services;
 
-
 import fr.paris.lutece.plugins.workflow.modules.upload.business.task.TaskUploadConfig;
-
 import fr.paris.lutece.plugins.workflow.modules.upload.factory.FactoryService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.Task;
-
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
@@ -89,8 +86,8 @@ public class TaskUpload extends Task
                                                                       .getListUploadedFiles( strUploadValue,
                 request.getSession(  ) );
 
-
-        FactoryService.getHistoryService(  ).create( nIdResourceHistory, this.getId(  ), listFiles, WorkflowUtils.getPlugin(  ) );
+        FactoryService.getHistoryService(  )
+                      .create( nIdResourceHistory, this.getId(  ), listFiles, WorkflowUtils.getPlugin(  ) );
 
         TaskUploadAsynchronousUploadHandler.getHandler(  ).removeSessionFiles( request.getSession(  ).getId(  ) );
     }

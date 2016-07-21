@@ -33,14 +33,15 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.upload.services;
 
-import java.util.List;
-
 import fr.paris.lutece.plugins.workflow.modules.upload.business.history.UploadHistory;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 
 import org.apache.commons.fileupload.FileItem;
+
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 
 // TODO: Auto-generated Javadoc
@@ -51,7 +52,6 @@ public interface IUploadHistoryService
 {
     /** The Constant BEAN_SERVICE. */
     String BEAN_SERVICE = "workflow-upload.uploadValueService";
-
 
     /**
      * Creates the.

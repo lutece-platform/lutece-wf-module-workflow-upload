@@ -9,7 +9,8 @@ CREATE TABLE workflow_task_upload_config
 (
 	id_task INT DEFAULT 0 NOT NULL,
 	max_file INT DEFAULT 0 NOT NULL, 	
-        title  VARCHAR(200) DEFAULT '' NULL,
+	max_size_file INT DEFAULT 0 NOT NULL, 	
+        title  VARCHAR(255) DEFAULT '' NULL,
         is_mandatory SMALLINT DEFAULT 0,
 	PRIMARY KEY (id_task)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;

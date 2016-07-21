@@ -51,7 +51,6 @@ public interface IUploadHistoryDAO
      * @param history the history
      * @param plugin the plugin
      */
-
     void insert( UploadHistory history, Plugin plugin );
 
     /**
@@ -62,7 +61,6 @@ public interface IUploadHistoryDAO
      * @param plugin the plugin
      * @return the upload history
      */
-
     UploadHistory load( int nIdHistory, int nIdTask, Plugin plugin );
 
     /**
@@ -72,7 +70,6 @@ public interface IUploadHistoryDAO
      * @param nIdTask the n id task
      * @param plugin the plugin
      */
-  
     void deleteByHistory( int nIdHistory, int nIdTask, Plugin plugin );
 
     /**
@@ -81,6 +78,5 @@ public interface IUploadHistoryDAO
      * @param nIdTask the n id task
      * @param plugin the plugin
      */
-  
     void deleteByTask( int nIdTask, Plugin plugin );
 }

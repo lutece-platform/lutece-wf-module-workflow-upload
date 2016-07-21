@@ -1,8 +1,8 @@
 <script >
-   function removeUploadValue(idHistory, idTask) 
+   function removeUploadValue(idHistory, idTask,idFileUpload) 
    {
     var form = $('<form>', 
-       { 'action': 'jsp/admin/plugins/workflow/modules/upload/ConfirmRemoveUpload.jsp?' + 'id_history=' + idHistory + '&id_task=' + idTask + '&return_url=' + encodeURIComponent(window.location.href),
+       { 'action': 'jsp/admin/plugins/workflow/modules/upload/ConfirmRemoveUpload.jsp?' + 'id_history=' + idHistory + '&id_task=' + idTask+ '&id_file_upload=' + idFileUpload  + '&return_url=' + encodeURIComponent(window.location.href),
          'method':'post'}
        );
        form.appendTo('body');
@@ -16,17 +16,25 @@
       <label>${config.title} :</label>
       </#if>
    </div>
-   <div class="pull-right">
+ 
+</div>
+<#list list_file_uploaded as file_uploaded>
+<#if file_uploaded?has_content >
+<ul class="list-group">
+  <li class="list-group-item">
+<a href="${list_url[file_uploaded.idUploadFile?string]}">${file_uploaded.file.title}</a>    
+
+  <div class="pull-right">
       <#if has_permission_delete >
-      <a class="btn btn-danger btn-sm" href="#" onclick="removeUploadValue(${id_history}, ${task.id});return false;" title="#i18n{module.workflow.upload.button.remove_upload}">
+      <a class="btn btn-danger btn-sm" href="#" onclick="removeUploadValue(${id_history}, ${task.id}, ${file_uploaded.idUploadFile});return false;" title="#i18n{module.workflow.upload.button.remove_upload} : ${file_uploaded.idUploadFile}">
       <i class="fa fa-trash"></i>
       </a>
       </#if>
    </div>
-</div>
-<#list list_file_uploaded as file_uploaded>
-<#if file_uploaded?has_content >
-<a href="${list_url[file_uploaded.idUploadFile?string]}">${file_uploaded.file.title}</a>  <br/>
+  </li>
+
+</ul>
+
  </#if>
 
 </#list>
