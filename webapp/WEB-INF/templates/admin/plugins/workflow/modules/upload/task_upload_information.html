@@ -1,3 +1,4 @@
+<#if config?exists  && list_file_uploaded?has_content >
 <script >
    function removeUploadValue(idHistory, idTask,idFileUpload) 
    {
@@ -9,7 +10,6 @@
        form.submit().remove();
    }
 </script>
-<#if config?exists  && list_file_uploaded?has_content >
 <div class="clearfix">
    <div class="pull-left">
       <#if config.title?exists >
