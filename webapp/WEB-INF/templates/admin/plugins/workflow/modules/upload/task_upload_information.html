@@ -10,32 +10,28 @@
        form.submit().remove();
    }
 </script>
-<div class="clearfix">
-   <div class="pull-left">
-      <#if config.title?exists >
+<div>
+  <div>
+    <#if config.title?exists >
       <label>${config.title} :</label>
-      </#if>
-   </div>
- 
+    </#if>
+  </div>
+
+  <#list list_file_uploaded as file_uploaded>
+    <#if file_uploaded?has_content >
+      <div class="clearfix">
+        <a class="pull-left" href="${list_url[file_uploaded.idUploadFile?string]}">${file_uploaded.file.title}</a>    
+
+        <#if has_permission_delete >
+          <div class="pull-right">
+            <a class="btn btn-danger btn-xs" href="#" onclick="removeUploadValue(${id_history}, ${task.id}, ${file_uploaded.idUploadFile});return false;" title="#i18n{module.workflow.upload.button.remove_upload}">
+              <i class="fa fa-trash"></i>
+            </a>
+          </div>
+        </#if>
+      </div>
+    </#if>
+  </#list>
 </div>
-<#list list_file_uploaded as file_uploaded>
-<#if file_uploaded?has_content >
-<ul class="list-group">
-  <li class="list-group-item">
-<a href="${list_url[file_uploaded.idUploadFile?string]}">${file_uploaded.file.title}</a>    
 
-  <div class="pull-right">
-      <#if has_permission_delete >
-      <a class="btn btn-danger btn-sm" href="#" onclick="removeUploadValue(${id_history}, ${task.id}, ${file_uploaded.idUploadFile});return false;" title="#i18n{module.workflow.upload.button.remove_upload} : ${file_uploaded.idUploadFile}">
-      <i class="fa fa-trash"></i>
-      </a>
-      </#if>
-   </div>
-  </li>
-
-</ul>
-
- </#if>
-
-</#list>
 </#if>

@@ -37,8 +37,18 @@ import fr.paris.lutece.plugins.workflow.modules.upload.business.file.UploadFile;
 import fr.paris.lutece.plugins.workflow.modules.upload.business.history.UploadHistory;
 import fr.paris.lutece.plugins.workflow.modules.upload.factory.FactoryDOA;
 import fr.paris.lutece.plugins.workflow.modules.upload.factory.FactoryService;
+import fr.paris.lutece.plugins.workflow.modules.upload.services.IUploadHistoryService;
+import fr.paris.lutece.plugins.workflow.modules.upload.services.UploadHistoryService;
 import fr.paris.lutece.plugins.workflow.modules.upload.services.UploadResourceIdService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.plugins.workflow.web.task.TaskComponentManager;
+import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
+import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
+import fr.paris.lutece.plugins.workflowcore.service.resource.ResourceHistoryService;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
+import fr.paris.lutece.plugins.workflowcore.service.task.TaskService;
+import fr.paris.lutece.plugins.workflowcore.web.task.ITaskComponentManager;
 import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
@@ -46,20 +56,25 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
 import fr.paris.lutece.util.url.UrlItem;
+
+import org.apache.commons.lang.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
+import java.util.Iterator;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class UploadJspBean.
+ * This class manages uploaded files.
  */
 public class UploadJspBean extends MVCAdminJspBean
 {
@@ -88,6 +103,12 @@ public class UploadJspBean extends MVCAdminJspBean
     /** The Constant PARAMETER_ENCODING. */
     // Other constants
     private static final String PARAMETER_ENCODING = "UTF-8";
+
+    // Services
+    private IUploadHistoryService _uploadHistoryService = SpringContextService.getBean( UploadHistoryService.BEAN_SERVICE );
+    private IResourceHistoryService _resourceHistoryService = SpringContextService.getBean( ResourceHistoryService.BEAN_SERVICE );
+    private ITaskService _taskService = SpringContextService.getBean( TaskService.BEAN_SERVICE );
+    private ITaskComponentManager _taskComponentManager = SpringContextService.getBean( TaskComponentManager.BEAN_MANAGER );
 
     /**
      * Gets the confirm remove upload.
@@ -151,6 +172,42 @@ public class UploadJspBean extends MVCAdminJspBean
         {
             FileHome.remove( uploadFile.getIdFile(  ) );
             FactoryDOA.getUploadFileDAO(  ).deleteByid( nIdFileUpload, WorkflowUtils.getPlugin(  ) );
+        }
+
+        List<UploadFile> listFile = FactoryDOA.getUploadFileDAO(  ).load( nIdHistory, WorkflowUtils.getPlugin(  ) );
+
+        // Remove task history if not other file in the task
+        if ( listFile.isEmpty(  ) )
+        {
+            _uploadHistoryService.removeByHistory( nIdHistory, nIdTask, WorkflowUtils.getPlugin(  ) );
+        }
+
+        // Remove history if no other task information to display
+        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdHistory );
+        List<ITask> listActionTasks = _taskService.getListTaskByIdAction( resourceHistory.getAction(  ).getId(  ),
+                request.getLocale(  ) );
+
+        Iterator<ITask> iterator = listActionTasks.iterator(  );
+        boolean informationToDisplay = false;
+
+        while ( iterator.hasNext(  ) )
+        {
+            ITask task = iterator.next(  );
+
+            String strTaskinformation = _taskComponentManager.getDisplayTaskInformation( resourceHistory.getId(  ),
+                    request, request.getLocale(  ), task );
+
+            if ( !StringUtils.isEmpty( strTaskinformation ) )
+            {
+                informationToDisplay = true;
+
+                break;
+            }
+        }
+
+        if ( !informationToDisplay )
+        {
+            _resourceHistoryService.remove( nIdHistory );
         }
 
         return URLDecoder.decode( request.getParameter( PARAMETER_RETURN_URL ), PARAMETER_ENCODING );
