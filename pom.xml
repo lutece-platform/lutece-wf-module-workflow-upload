@@ -55,4 +55,11 @@
         <jiraProjectName>MWUPLOAD</jiraProjectName>
         <jiraComponentId>13457</jiraComponentId>
     </properties>
+	
+	<scm>
+        <connection>scm:git:https://github.com/lutece-platform/lutece-wf-module-workflow-upload.git</connection>
+        <developerConnection>scm:git:https://github.com/lutece-platform/lutece-wf-module-workflow-upload.git</developerConnection>
+        <url>https://github.com/lutece-platform/lutece-wf-module-workflow-upload.git</url>
+        <tag>HEAD</tag>
+	</scm>
 </project>
