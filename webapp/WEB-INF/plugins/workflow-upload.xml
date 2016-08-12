@@ -1,12 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<plug-in>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><plug-in>
     <name>workflow-upload</name>
     <class>fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation</class>
     <version>1.0.0</version>
-    <documentation></documentation>
-    <installation></installation>
-    <changes></changes>
-    <user-guide></user-guide>
+    <documentation/>
+    <installation/>
+    <changes/>
+    <user-guide/>
     <description>module.workflow.upload.module.description</description>
     <provider>module.workflow.upload.module.provider</provider>
     <provider-url>http://lutece.paris.fr</provider-url>
