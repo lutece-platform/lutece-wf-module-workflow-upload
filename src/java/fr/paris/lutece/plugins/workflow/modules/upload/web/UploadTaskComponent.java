@@ -58,6 +58,7 @@ import fr.paris.lutece.util.xml.XmlUtil;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -216,10 +217,8 @@ public class UploadTaskComponent extends AbstractTaskComponent
         model.put( MARK_HANDLER, TaskUploadAsynchronousUploadHandler.getHandler(  ) );
         model.put( MARK_FILE_NAME, strUpload );
 
-        model.put( MARK_LIST_UPLOADED_FILE,
-            TaskUploadAsynchronousUploadHandler.getHandler(  )
-                                               .getListUploadedFiles( PARAMETER_UPLOAD_VALUE + "_" + task.getId(  ),
-                request.getSession(  ) ) );
+        TaskUploadAsynchronousUploadHandler.getHandler(  ).removeSessionFiles( request.getSession(  ).getId(  ) );
+        model.put( MARK_LIST_UPLOADED_FILE, new ArrayList<FileItem>(  ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_UPLOAD_FORM, locale, model );
 
