@@ -86,9 +86,12 @@ public class TaskUpload extends Task
                                                                       .getListUploadedFiles( strUploadValue,
                 request.getSession(  ) );
 
-        FactoryService.getHistoryService(  )
-                      .create( nIdResourceHistory, this.getId(  ), listFiles, WorkflowUtils.getPlugin(  ) );
-
+        if( ! listFiles.isEmpty(  ) )
+        {
+	        FactoryService.getHistoryService(  )
+	                      .create( nIdResourceHistory, this.getId(  ), listFiles, WorkflowUtils.getPlugin(  ) );
+        }
+    	
         TaskUploadAsynchronousUploadHandler.getHandler(  ).removeSessionFiles( request.getSession(  ).getId(  ) );
     }
 
