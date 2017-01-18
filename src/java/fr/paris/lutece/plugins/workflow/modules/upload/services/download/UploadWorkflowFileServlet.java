@@ -49,7 +49,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 /**
  * Servlet serving ticketing files
  */
@@ -62,21 +61,23 @@ public class UploadWorkflowFileServlet extends HttpServlet
 
     // Other constants
     private static final String LOG_UNKNOWN_ID_RESPONSE = "Calling Workflow Upload file servlet with unknown id file : ";
-    private static final String LOG_WRONG_ID_RESPONSE = "Calling Workflow Upload file servlet with wrong format for parameter " +
-        DownloadFileService.PARAMETER_ID_FILE + " : ";
+    private static final String LOG_WRONG_ID_RESPONSE = "Calling Workflow Upload file servlet with wrong format for parameter "
+            + DownloadFileService.PARAMETER_ID_FILE + " : ";
     private static final String LOG_UNAUTHENTICATED_REQUEST = "Calling Workflow Upload file servlet with unauthenticated request";
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *
-     * @param request servlet request
-     * @param httpResponse servlet response
-     * @throws ServletException the servlet Exception
-     * @throws IOException the io exception
+     * @param request
+     *            servlet request
+     * @param httpResponse
+     *            servlet response
+     * @throws ServletException
+     *             the servlet Exception
+     * @throws IOException
+     *             the io exception
      */
-    protected void processRequest( HttpServletRequest request, HttpServletResponse httpResponse )
-        throws ServletException, IOException
+    protected void processRequest( HttpServletRequest request, HttpServletResponse httpResponse ) throws ServletException, IOException
     {
         String strIdFile = request.getParameter( DownloadFileService.PARAMETER_ID_FILE );
 
@@ -98,10 +99,10 @@ public class UploadWorkflowFileServlet extends HttpServlet
                 throw new ServletException( LOG_UNKNOWN_ID_RESPONSE + strIdFile );
             }
 
-            PhysicalFile physicalFile = PhysicalFileHome.findByPrimaryKey( file.getPhysicalFile(  ).getIdPhysicalFile(  ) );
+            PhysicalFile physicalFile = PhysicalFileHome.findByPrimaryKey( file.getPhysicalFile( ).getIdPhysicalFile( ) );
 
-            httpResponse.setHeader( "Content-Disposition", "attachment; filename=\"" + file.getTitle(  ) + "\";" );
-            httpResponse.setHeader( "Content-type", file.getMimeType(  ) );
+            httpResponse.setHeader( "Content-Disposition", "attachment; filename=\"" + file.getTitle( ) + "\";" );
+            httpResponse.setHeader( "Content-type", file.getMimeType( ) );
             httpResponse.addHeader( "Content-Encoding", "UTF-8" );
             httpResponse.addHeader( "Pragma", "public" );
             httpResponse.addHeader( "Expires", "0" );
@@ -109,36 +110,39 @@ public class UploadWorkflowFileServlet extends HttpServlet
 
             try
             {
-                OutputStream os = httpResponse.getOutputStream(  );
-                os.write( physicalFile.getValue(  ) );
+                OutputStream os = httpResponse.getOutputStream( );
+                os.write( physicalFile.getValue( ) );
                 // We do not close the output stream in finaly clause because it is
                 // the response stream,
                 // and an error message needs to be displayed if an exception occurs
-                os.close(  );
+                os.close( );
             }
-            catch ( IOException e )
+            catch( IOException e )
             {
-                AppLogService.error( e.getStackTrace(  ), e );
+                AppLogService.error( e.getStackTrace( ), e );
             }
         }
         else
         {
             AppLogService.error( LOG_WRONG_ID_RESPONSE + strIdFile );
-            throw new ServletException(  );
+            throw new ServletException( );
         }
     }
 
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException the servlet Exception
-     * @throws IOException the io exception
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             the servlet Exception
+     * @throws IOException
+     *             the io exception
      */
     @Override
-    protected void doGet( HttpServletRequest request, HttpServletResponse response )
-        throws ServletException, IOException
+    protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
         processRequest( request, response );
     }
@@ -146,14 +150,17 @@ public class UploadWorkflowFileServlet extends HttpServlet
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException the servlet Exception
-     * @throws IOException the io exception
+     * @param request
+     *            servlet request
+     * @param response
+     *            servlet response
+     * @throws ServletException
+     *             the servlet Exception
+     * @throws IOException
+     *             the io exception
      */
     @Override
-    protected void doPost( HttpServletRequest request, HttpServletResponse response )
-        throws ServletException, IOException
+    protected void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
         processRequest( request, response );
     }
@@ -164,7 +171,7 @@ public class UploadWorkflowFileServlet extends HttpServlet
      * @return message
      */
     @Override
-    public String getServletInfo(  )
+    public String getServletInfo( )
     {
         return "Servlet serving file content";
     }
@@ -172,12 +179,12 @@ public class UploadWorkflowFileServlet extends HttpServlet
     /**
      * Checks if the request is authenticated or not
      *
-     * @param request the HTTP request
-     * @return {@code true} if the request is authenticated, {@code false}
-     * otherwise
+     * @param request
+     *            the HTTP request
+     * @return {@code true} if the request is authenticated, {@code false} otherwise
      */
     private boolean isRequestAuthenticated( HttpServletRequest request )
     {
-        return RequestAuthenticationService.getRequestAuthenticator(  ).isRequestAuthenticated( request );
+        return RequestAuthenticationService.getRequestAuthenticator( ).isRequestAuthenticated( request );
     }
 }

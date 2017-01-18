@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 /**
  * The Class DownloadFileService.
  */
@@ -54,31 +53,32 @@ public final class DownloadFileService
     /**
      * Instantiates a new download file service.
      */
-    private DownloadFileService(  )
+    private DownloadFileService( )
     {
     }
 
     /**
      * Gets the url download file.
      *
-     * @param nidFile the nid file
-     * @param strBaseUrl the str base url
+     * @param nidFile
+     *            the nid file
+     * @param strBaseUrl
+     *            the str base url
      * @return the url download file
      */
     public static String getUrlDownloadFile( int nidFile, String strBaseUrl )
     {
-        List<String> listElements = new ArrayList<String>(  );
+        List<String> listElements = new ArrayList<String>( );
         listElements.add( Integer.toString( nidFile ) );
 
-        String strTimestamp = Long.toString( new Date(  ).getTime(  ) );
-        String strSignature = RequestAuthenticationService.getRequestAuthenticator(  )
-                                                          .buildSignature( listElements, strTimestamp );
+        String strTimestamp = Long.toString( new Date( ).getTime( ) );
+        String strSignature = RequestAuthenticationService.getRequestAuthenticator( ).buildSignature( listElements, strTimestamp );
 
         UrlItem url = new UrlItem( strBaseUrl + URL_SERVLET );
         url.addParameter( PARAMETER_ID_FILE, nidFile );
         url.addParameter( PARAMETER_SIGNATURE, strSignature );
         url.addParameter( PARAMETER_ID_TIMETAMP, strTimestamp );
 
-        return url.getUrl(  );
+        return url.getUrl( );
     }
 }

@@ -45,7 +45,6 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.Locale;
 
-
 /**
  * The Class UploadResourceIdService.
  */
@@ -58,7 +57,7 @@ public class UploadResourceIdService extends ResourceIdService
     /**
      * Constructor
      */
-    public UploadResourceIdService(  )
+    public UploadResourceIdService( )
     {
         setPluginName( WorkflowPlugin.PLUGIN_NAME );
     }
@@ -66,15 +65,15 @@ public class UploadResourceIdService extends ResourceIdService
     /**
      * Initializes the service
      */
-    public void register(  )
+    public void register( )
     {
-        ResourceType rt = new ResourceType(  );
-        rt.setResourceIdServiceClass( UploadResourceIdService.class.getName(  ) );
+        ResourceType rt = new ResourceType( );
+        rt.setResourceIdServiceClass( UploadResourceIdService.class.getName( ) );
         rt.setPluginName( WorkflowPlugin.PLUGIN_NAME );
         rt.setResourceTypeKey( UploadHistory.UPLOAD_RESOURCE_TYPE );
         rt.setResourceTypeLabelKey( PROPERTY_LABEL_RESOURCE_TYPE );
 
-        Permission p = new Permission(  );
+        Permission p = new Permission( );
         p.setPermissionKey( PERMISSION_DELETE );
         p.setPermissionTitleKey( PROPERTY_LABEL_DELETE );
         rt.registerPermission( p );
@@ -84,7 +83,9 @@ public class UploadResourceIdService extends ResourceIdService
 
     /**
      * Returns a list of resource ids
-     * @param locale The current locale
+     * 
+     * @param locale
+     *            The current locale
      * @return A list of resource ids
      */
     public ReferenceList getResourceIdList( Locale locale )

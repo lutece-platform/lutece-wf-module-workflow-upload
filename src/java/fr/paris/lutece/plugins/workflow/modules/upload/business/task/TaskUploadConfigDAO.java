@@ -37,7 +37,6 @@ import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfigDAO;
 import fr.paris.lutece.util.sql.DAOUtil;
 
-
 /**
  *
  * TaskUploadConfig
@@ -56,18 +55,18 @@ public class TaskUploadConfigDAO implements ITaskConfigDAO<TaskUploadConfig>
     @Override
     public synchronized void insert( TaskUploadConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) );
 
         int nPos = 0;
 
-        daoUtil.setInt( ++nPos, config.getIdTask(  ) );
-        daoUtil.setInt( ++nPos, config.getMaxFile(  ) );
-        daoUtil.setInt( ++nPos, config.getMaxSizeFile(  ) );
-        daoUtil.setString( ++nPos, config.getTitle(  ) );
-        daoUtil.setBoolean( ++nPos, config.isMandatory(  ) );
+        daoUtil.setInt( ++nPos, config.getIdTask( ) );
+        daoUtil.setInt( ++nPos, config.getMaxFile( ) );
+        daoUtil.setInt( ++nPos, config.getMaxSizeFile( ) );
+        daoUtil.setString( ++nPos, config.getTitle( ) );
+        daoUtil.setBoolean( ++nPos, config.isMandatory( ) );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -76,19 +75,19 @@ public class TaskUploadConfigDAO implements ITaskConfigDAO<TaskUploadConfig>
     @Override
     public void store( TaskUploadConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin( ) );
 
         int nPos = 0;
 
-        daoUtil.setInt( ++nPos, config.getIdTask(  ) );
-        daoUtil.setInt( ++nPos, config.getMaxFile(  ) );
-        daoUtil.setInt( ++nPos, config.getMaxSizeFile(  ) );
-        daoUtil.setString( ++nPos, config.getTitle(  ) );
-        daoUtil.setBoolean( ++nPos, config.isMandatory(  ) );
+        daoUtil.setInt( ++nPos, config.getIdTask( ) );
+        daoUtil.setInt( ++nPos, config.getMaxFile( ) );
+        daoUtil.setInt( ++nPos, config.getMaxSizeFile( ) );
+        daoUtil.setString( ++nPos, config.getTitle( ) );
+        daoUtil.setBoolean( ++nPos, config.isMandatory( ) );
 
-        daoUtil.setInt( ++nPos, config.getIdTask(  ) );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.setInt( ++nPos, config.getIdTask( ) );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -98,17 +97,17 @@ public class TaskUploadConfigDAO implements ITaskConfigDAO<TaskUploadConfig>
     public TaskUploadConfig load( int nIdState )
     {
         TaskUploadConfig config = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin( ) );
 
         daoUtil.setInt( 1, nIdState );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
         int nPos = 0;
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
-            config = new TaskUploadConfig(  );
+            config = new TaskUploadConfig( );
             config.setIdTask( daoUtil.getInt( ++nPos ) );
             config.setMaxFile( daoUtil.getInt( ++nPos ) );
             config.setMaxSizeFile( daoUtil.getInt( ++nPos ) );
@@ -116,7 +115,7 @@ public class TaskUploadConfigDAO implements ITaskConfigDAO<TaskUploadConfig>
             config.setMandatory( daoUtil.getBoolean( ++nPos ) );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return config;
     }
@@ -127,10 +126,10 @@ public class TaskUploadConfigDAO implements ITaskConfigDAO<TaskUploadConfig>
     @Override
     public void delete( int nIdState )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin( ) );
 
         daoUtil.setInt( 1, nIdState );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 }

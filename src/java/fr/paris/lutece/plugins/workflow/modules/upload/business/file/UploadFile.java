@@ -35,13 +35,12 @@ package fr.paris.lutece.plugins.workflow.modules.upload.business.file;
 
 import fr.paris.lutece.portal.business.file.File;
 
-
 /**
  * The Class UploadFile.
  */
 public class UploadFile
 {
-    // Variables declarations 
+    // Variables declarations
     private int _nIdUploadFile;
     private int _nIdHistory;
     private int _nIdFile;
@@ -52,7 +51,7 @@ public class UploadFile
      *
      * @return the file
      */
-    public File getFile(  )
+    public File getFile( )
     {
         return _file;
     }
@@ -60,7 +59,8 @@ public class UploadFile
     /**
      * Sets the file.
      *
-     * @param file the new file
+     * @param file
+     *            the new file
      */
     public void setFile( File file )
     {
@@ -68,17 +68,20 @@ public class UploadFile
     }
 
     /**
-        * Returns the IdUploadFile
-        * @return The IdUploadFile
-        */
-    public int getIdUploadFile(  )
+     * Returns the IdUploadFile
+     * 
+     * @return The IdUploadFile
+     */
+    public int getIdUploadFile( )
     {
         return _nIdUploadFile;
     }
 
     /**
      * Sets the IdUploadFile
-     * @param nIdUploadFile The IdUploadFile
+     * 
+     * @param nIdUploadFile
+     *            The IdUploadFile
      */
     public void setIdUploadFile( int nIdUploadFile )
     {
@@ -87,16 +90,19 @@ public class UploadFile
 
     /**
      * Returns the IdHistory
+     * 
      * @return The IdHistory
      */
-    public int getIdHistory(  )
+    public int getIdHistory( )
     {
         return _nIdHistory;
     }
 
     /**
      * Sets the IdHistory
-     * @param nIdHistory The IdHistory
+     * 
+     * @param nIdHistory
+     *            The IdHistory
      */
     public void setIdHistory( int nIdHistory )
     {
@@ -105,16 +111,19 @@ public class UploadFile
 
     /**
      * Returns the IdFile
+     * 
      * @return The IdFile
      */
-    public int getIdFile(  )
+    public int getIdFile( )
     {
         return _nIdFile;
     }
 
     /**
      * Sets the IdFile
-     * @param nIdFile The IdFile
+     * 
+     * @param nIdFile
+     *            The IdFile
      */
     public void setIdFile( int nIdFile )
     {

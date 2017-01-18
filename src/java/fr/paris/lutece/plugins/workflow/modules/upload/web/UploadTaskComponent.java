@@ -66,7 +66,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
  * UploadTaskComponent
@@ -120,7 +119,7 @@ public class UploadTaskComponent extends AbstractTaskComponent
             nNumberSize = Integer.valueOf( strMaxSizeFile );
             nNumberFile = Integer.valueOf( strMaxFile );
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
         }
 
@@ -132,7 +131,7 @@ public class UploadTaskComponent extends AbstractTaskComponent
         }
         else
         {
-            if ( strTitle.length(  ) > 255 )
+            if ( strTitle.length( ) > 255 )
             {
                 strMessageError = MESSAGE_VALIDATION_CONFIG_TITLE_SIZE;
             }
@@ -160,28 +159,25 @@ public class UploadTaskComponent extends AbstractTaskComponent
      * {@inheritDoc}
      */
     @Override
-    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale,
-        ITask task )
+    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
-        String strUploadValue = PARAMETER_UPLOAD_VALUE + "_" + task.getId(  );
-        TaskUploadConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+        String strUploadValue = PARAMETER_UPLOAD_VALUE + "_" + task.getId( );
+        TaskUploadConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
         if ( config == null )
         {
-            return AdminMessageService.getMessageUrl( request, MESSAGE_NO_CONFIGURATION_FOR_TASK_UPLOAD,
-                AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, MESSAGE_NO_CONFIGURATION_FOR_TASK_UPLOAD, AdminMessage.TYPE_STOP );
         }
 
-        List<FileItem> listFiles = TaskUploadAsynchronousUploadHandler.getHandler(  )
-                                                                      .getListUploadedFiles( strUploadValue,
-                request.getSession(  ) );
+        List<FileItem> listFiles = TaskUploadAsynchronousUploadHandler.getHandler( ).getListUploadedFiles( strUploadValue, request.getSession( ) );
 
-        if ( config.isMandatory(  ) && listFiles.isEmpty(  ) )
+        if ( config.isMandatory( ) && listFiles.isEmpty( ) )
         {
-            Object[] tabRequiredFields = { config.getTitle(  ) };
+            Object [ ] tabRequiredFields = {
+                config.getTitle( )
+            };
 
-            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields,
-                AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
         }
 
         return null;
@@ -193,36 +189,35 @@ public class UploadTaskComponent extends AbstractTaskComponent
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
 
-        TaskUploadConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+        TaskUploadConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         model.put( MARK_CONFIG, config );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_UPLOAD_CONFIG, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
-        Locale locale, ITask task )
+    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>(  );
-        TaskUploadConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
-        String strUpload = PARAMETER_UPLOAD_VALUE + "_" + task.getId(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
+        TaskUploadConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        String strUpload = PARAMETER_UPLOAD_VALUE + "_" + task.getId( );
         model.put( MARK_CONFIG, config );
-        model.put( MARK_HANDLER, TaskUploadAsynchronousUploadHandler.getHandler(  ) );
+        model.put( MARK_HANDLER, TaskUploadAsynchronousUploadHandler.getHandler( ) );
         model.put( MARK_FILE_NAME, strUpload );
 
-        TaskUploadAsynchronousUploadHandler.getHandler(  ).removeSessionFiles( request.getSession(  ).getId(  ) );
-        model.put( MARK_LIST_UPLOADED_FILE, new ArrayList<FileItem>(  ) );
+        TaskUploadAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ).getId( ) );
+        model.put( MARK_LIST_UPLOADED_FILE, new ArrayList<FileItem>( ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_UPLOAD_FORM, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
@@ -231,25 +226,23 @@ public class UploadTaskComponent extends AbstractTaskComponent
     @Override
     public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
-        UploadHistory uploadValue = FactoryService.getHistoryService(  )
-                                                  .findByPrimaryKey( nIdHistory, task.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
+        UploadHistory uploadValue = FactoryService.getHistoryService( ).findByPrimaryKey( nIdHistory, task.getId( ), WorkflowUtils.getPlugin( ) );
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
-        TaskUploadConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+        Map<String, Object> model = new HashMap<String, Object>( );
+        TaskUploadConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         AdminUser userConnected = AdminUserService.getAdminUser( request );
 
-        List<UploadFile> listFile = FactoryDOA.getUploadFileDAO(  ).load( nIdHistory, WorkflowUtils.getPlugin(  ) );
+        List<UploadFile> listFile = FactoryDOA.getUploadFileDAO( ).load( nIdHistory, WorkflowUtils.getPlugin( ) );
 
         @SuppressWarnings( "deprecation" )
-        String strBaseUrl = ( request != null ) ? AppPathService.getBaseUrl( request ) : AppPathService.getBaseUrl(  );
+        String strBaseUrl = ( request != null ) ? AppPathService.getBaseUrl( request ) : AppPathService.getBaseUrl( );
 
-        Map<String, Object> modelUrl = new HashMap<String, Object>(  );
+        Map<String, Object> modelUrl = new HashMap<String, Object>( );
 
-        for ( int i = 0; i < listFile.size(  ); i++ )
+        for ( int i = 0; i < listFile.size( ); i++ )
         {
-            modelUrl.put( Integer.toString( listFile.get( i ).getIdUploadFile(  ) ),
-                DownloadFileService.getUrlDownloadFile( listFile.get( i ).getIdFile(  ), strBaseUrl ) );
+            modelUrl.put( Integer.toString( listFile.get( i ).getIdUploadFile( ) ),
+                    DownloadFileService.getUrlDownloadFile( listFile.get( i ).getIdFile( ), strBaseUrl ) );
         }
 
         model.put( MARK_LIST_URL, modelUrl );
@@ -257,13 +250,12 @@ public class UploadTaskComponent extends AbstractTaskComponent
         model.put( MARK_TASK, task );
         model.put( MARK_CONFIG, config );
         model.put( MARK_LIST_FILE, listFile );
-        model.put( MARK_HAS_PERMISSION_DELETE,
-            RBACService.isAuthorized( uploadValue, UploadResourceIdService.PERMISSION_DELETE, userConnected ) );
-        model.put( MARK_IS_OWNER, FactoryService.getHistoryService(  ).isOwner( nIdHistory, userConnected ) );
+        model.put( MARK_HAS_PERMISSION_DELETE, RBACService.isAuthorized( uploadValue, UploadResourceIdService.PERMISSION_DELETE, userConnected ) );
+        model.put( MARK_IS_OWNER, FactoryService.getHistoryService( ).isOwner( nIdHistory, userConnected ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_UPLOAD_INFORMATION, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
@@ -272,10 +264,8 @@ public class UploadTaskComponent extends AbstractTaskComponent
     @Override
     public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
-        StringBuffer strXml = new StringBuffer(  );
-        UploadHistory uploadValue = FactoryService.getHistoryService(  )
-                                                  .findByPrimaryKey( nIdHistory, task.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
+        StringBuffer strXml = new StringBuffer( );
+        UploadHistory uploadValue = FactoryService.getHistoryService( ).findByPrimaryKey( nIdHistory, task.getId( ), WorkflowUtils.getPlugin( ) );
 
         if ( uploadValue != null )
         {
@@ -286,6 +276,6 @@ public class UploadTaskComponent extends AbstractTaskComponent
             XmlUtil.addEmptyElement( strXml, TAG_UPLOAD, null );
         }
 
-        return strXml.toString(  );
+        return strXml.toString( );
     }
 }

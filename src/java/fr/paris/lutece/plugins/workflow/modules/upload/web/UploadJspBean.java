@@ -72,7 +72,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class manages uploaded files.
  */
@@ -113,13 +112,15 @@ public class UploadJspBean extends MVCAdminJspBean
     /**
      * Gets the confirm remove upload.
      *
-     * @param request the request
+     * @param request
+     *            the request
      * @return the confirm remove upload
-     * @throws AccessDeniedException the access denied exception
-     * @throws UnsupportedEncodingException the unsupported encoding exception
+     * @throws AccessDeniedException
+     *             the access denied exception
+     * @throws UnsupportedEncodingException
+     *             the unsupported encoding exception
      */
-    public String getConfirmRemoveUpload( HttpServletRequest request )
-        throws AccessDeniedException, UnsupportedEncodingException
+    public String getConfirmRemoveUpload( HttpServletRequest request ) throws AccessDeniedException, UnsupportedEncodingException
     {
         if ( !canDeleteUpload( request ) )
         {
@@ -137,20 +138,21 @@ public class UploadJspBean extends MVCAdminJspBean
         url.addParameter( PARAMETER_ID_TASK, strIdTask );
         url.addParameter( PARAMETER_RETURN_URL, URLEncoder.encode( strReturnUrl, PARAMETER_ENCODING ) );
 
-        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_UPLOAD, url.getUrl(  ),
-            AdminMessage.TYPE_CONFIRMATION );
+        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_UPLOAD, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
     }
 
     /**
      * Do remove upload.
      *
-     * @param request the request
+     * @param request
+     *            the request
      * @return the string
-     * @throws AccessDeniedException the access denied exception
-     * @throws UnsupportedEncodingException the unsupported encoding exception
+     * @throws AccessDeniedException
+     *             the access denied exception
+     * @throws UnsupportedEncodingException
+     *             the unsupported encoding exception
      */
-    public String doRemoveUpload( HttpServletRequest request )
-        throws AccessDeniedException, UnsupportedEncodingException
+    public String doRemoveUpload( HttpServletRequest request ) throws AccessDeniedException, UnsupportedEncodingException
     {
         if ( !canDeleteUpload( request ) )
         {
@@ -164,38 +166,35 @@ public class UploadJspBean extends MVCAdminJspBean
         String strIdTask = request.getParameter( PARAMETER_ID_TASK );
         int nIdTask = WorkflowUtils.convertStringToInt( strIdTask );
 
-        //removing list file
-        UploadFile uploadFile = FactoryDOA.getUploadFileDAO(  )
-                                          .findbyprimaryKey( nIdFileUpload, WorkflowUtils.getPlugin(  ) );
+        // removing list file
+        UploadFile uploadFile = FactoryDOA.getUploadFileDAO( ).findbyprimaryKey( nIdFileUpload, WorkflowUtils.getPlugin( ) );
 
         if ( uploadFile != null )
         {
-            FileHome.remove( uploadFile.getIdFile(  ) );
-            FactoryDOA.getUploadFileDAO(  ).deleteByid( nIdFileUpload, WorkflowUtils.getPlugin(  ) );
+            FileHome.remove( uploadFile.getIdFile( ) );
+            FactoryDOA.getUploadFileDAO( ).deleteByid( nIdFileUpload, WorkflowUtils.getPlugin( ) );
         }
 
-        List<UploadFile> listFile = FactoryDOA.getUploadFileDAO(  ).load( nIdHistory, WorkflowUtils.getPlugin(  ) );
+        List<UploadFile> listFile = FactoryDOA.getUploadFileDAO( ).load( nIdHistory, WorkflowUtils.getPlugin( ) );
 
         // Remove task history if not other file in the task
-        if ( listFile.isEmpty(  ) )
+        if ( listFile.isEmpty( ) )
         {
-            _uploadHistoryService.removeByHistory( nIdHistory, nIdTask, WorkflowUtils.getPlugin(  ) );
+            _uploadHistoryService.removeByHistory( nIdHistory, nIdTask, WorkflowUtils.getPlugin( ) );
         }
 
         // Remove history if no other task information to display
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdHistory );
-        List<ITask> listActionTasks = _taskService.getListTaskByIdAction( resourceHistory.getAction(  ).getId(  ),
-                request.getLocale(  ) );
+        List<ITask> listActionTasks = _taskService.getListTaskByIdAction( resourceHistory.getAction( ).getId( ), request.getLocale( ) );
 
-        Iterator<ITask> iterator = listActionTasks.iterator(  );
+        Iterator<ITask> iterator = listActionTasks.iterator( );
         boolean informationToDisplay = false;
 
-        while ( iterator.hasNext(  ) )
+        while ( iterator.hasNext( ) )
         {
-            ITask task = iterator.next(  );
+            ITask task = iterator.next( );
 
-            String strTaskinformation = _taskComponentManager.getDisplayTaskInformation( resourceHistory.getId(  ),
-                    request, request.getLocale(  ), task );
+            String strTaskinformation = _taskComponentManager.getDisplayTaskInformation( resourceHistory.getId( ), request, request.getLocale( ), task );
 
             if ( !StringUtils.isEmpty( strTaskinformation ) )
             {
@@ -216,7 +215,8 @@ public class UploadJspBean extends MVCAdminJspBean
     /**
      * Can delete upload.
      *
-     * @param request the request
+     * @param request
+     *            the request
      * @return true, if successful
      */
     private boolean canDeleteUpload( HttpServletRequest request )
@@ -227,12 +227,10 @@ public class UploadJspBean extends MVCAdminJspBean
         int nIdTask = WorkflowUtils.convertStringToInt( strIdTask );
         AdminUser userConnected = AdminUserService.getAdminUser( request );
 
-        UploadHistory uploadValue = FactoryService.getHistoryService(  )
-                                                  .findByPrimaryKey( nIdHistory, nIdTask, WorkflowUtils.getPlugin(  ) );
+        UploadHistory uploadValue = FactoryService.getHistoryService( ).findByPrimaryKey( nIdHistory, nIdTask, WorkflowUtils.getPlugin( ) );
 
-        boolean bHasPermissionDeletion = RBACService.isAuthorized( uploadValue,
-                UploadResourceIdService.PERMISSION_DELETE, userConnected );
-        boolean bIsOwner = FactoryService.getHistoryService(  ).isOwner( nIdHistory, userConnected );
+        boolean bHasPermissionDeletion = RBACService.isAuthorized( uploadValue, UploadResourceIdService.PERMISSION_DELETE, userConnected );
+        boolean bIsOwner = FactoryService.getHistoryService( ).isOwner( nIdHistory, userConnected );
 
         return bHasPermissionDeletion || bIsOwner;
     }

@@ -57,7 +57,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-
 // TODO: Auto-generated Javadoc
 /**
  * The Class UploadHistoryService.
@@ -76,7 +75,7 @@ public class UploadHistoryService implements IUploadHistoryService
      *
      * @return the upload history dao
      */
-    private IUploadHistoryDAO getUploadHistoryDAO(  )
+    private IUploadHistoryDAO getUploadHistoryDAO( )
     {
         if ( _dao == null )
         {
@@ -98,18 +97,18 @@ public class UploadHistoryService implements IUploadHistoryService
             File file = buildFileWithPhysicalFile( fileitem );
             int nidFile = FileHome.create( file );
 
-            UploadFile uploadFile = new UploadFile(  );
+            UploadFile uploadFile = new UploadFile( );
             uploadFile.setIdFile( nidFile );
             uploadFile.setIdHistory( nIdResourceHistory );
 
-            FactoryDOA.getUploadFileDAO(  ).insert( uploadFile, WorkflowUtils.getPlugin(  ) );
+            FactoryDOA.getUploadFileDAO( ).insert( uploadFile, WorkflowUtils.getPlugin( ) );
         }
 
-        UploadHistory uploadValue = new UploadHistory(  );
+        UploadHistory uploadValue = new UploadHistory( );
         uploadValue.setIdResourceHistory( nIdResourceHistory );
         uploadValue.setIdTask( nidTask );
 
-        getUploadHistoryDAO(  ).insert( uploadValue, plugin );
+        getUploadHistoryDAO( ).insert( uploadValue, plugin );
     }
 
     /**
@@ -119,7 +118,7 @@ public class UploadHistoryService implements IUploadHistoryService
     @Transactional( "workflow.transactionManager" )
     public void removeByHistory( int nIdHistory, int nIdTask, Plugin plugin )
     {
-        getUploadHistoryDAO(  ).deleteByHistory( nIdHistory, nIdTask, plugin );
+        getUploadHistoryDAO( ).deleteByHistory( nIdHistory, nIdTask, plugin );
     }
 
     /**
@@ -129,7 +128,7 @@ public class UploadHistoryService implements IUploadHistoryService
     @Transactional( "workflow.transactionManager" )
     public void removeByTask( int nIdTask, Plugin plugin )
     {
-        getUploadHistoryDAO(  ).deleteByTask( nIdTask, plugin );
+        getUploadHistoryDAO( ).deleteByTask( nIdTask, plugin );
     }
 
     /**
@@ -138,7 +137,7 @@ public class UploadHistoryService implements IUploadHistoryService
     @Override
     public UploadHistory findByPrimaryKey( int nIdHistory, int nIdTask, Plugin plugin )
     {
-        return getUploadHistoryDAO(  ).load( nIdHistory, nIdTask, plugin );
+        return getUploadHistoryDAO( ).load( nIdHistory, nIdTask, plugin );
     }
 
     /**
@@ -148,26 +147,27 @@ public class UploadHistoryService implements IUploadHistoryService
     public boolean isOwner( int nIdHistory, AdminUser adminUser )
     {
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdHistory );
-        AdminUser userOwner = AdminUserHome.findUserByLogin( resourceHistory.getUserAccessCode(  ) );
+        AdminUser userOwner = AdminUserHome.findUserByLogin( resourceHistory.getUserAccessCode( ) );
 
-        return userOwner.getUserId(  ) == adminUser.getUserId(  );
+        return userOwner.getUserId( ) == adminUser.getUserId( );
     }
 
     /**
      * Builds the file with physical file.
      *
-     * @param fileItem the file item
+     * @param fileItem
+     *            the file item
      * @return the file
      */
     private File buildFileWithPhysicalFile( FileItem fileItem )
     {
-        File file = new File(  );
-        file.setTitle( fileItem.getName(  ) );
-        file.setSize( ( fileItem.getSize(  ) < Integer.MAX_VALUE ) ? (int) fileItem.getSize(  ) : Integer.MAX_VALUE );
-        file.setMimeType( FileSystemUtil.getMIMEType( file.getTitle(  ) ) );
+        File file = new File( );
+        file.setTitle( fileItem.getName( ) );
+        file.setSize( ( fileItem.getSize( ) < Integer.MAX_VALUE ) ? (int) fileItem.getSize( ) : Integer.MAX_VALUE );
+        file.setMimeType( FileSystemUtil.getMIMEType( file.getTitle( ) ) );
 
-        PhysicalFile physicalFile = new PhysicalFile(  );
-        physicalFile.setValue( fileItem.get(  ) );
+        PhysicalFile physicalFile = new PhysicalFile( );
+        physicalFile.setValue( fileItem.get( ) );
         file.setPhysicalFile( physicalFile );
 
         return file;

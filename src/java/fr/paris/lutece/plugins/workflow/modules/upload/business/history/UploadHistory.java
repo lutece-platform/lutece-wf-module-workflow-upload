@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.workflow.modules.upload.business.history;
 
 import fr.paris.lutece.portal.service.rbac.RBACResource;
 
-
 // TODO: Auto-generated Javadoc
 /**
  * The Class UploadHistory.
@@ -59,7 +58,7 @@ public class UploadHistory implements RBACResource
      *
      * @return the id resource history
      */
-    public int getIdResourceHistory(  )
+    public int getIdResourceHistory( )
     {
         return _nIdResourceHistory;
     }
@@ -67,7 +66,8 @@ public class UploadHistory implements RBACResource
     /**
      * Sets the id resource history.
      *
-     * @param id the new id resource history
+     * @param id
+     *            the new id resource history
      */
     public void setIdResourceHistory( int id )
     {
@@ -79,7 +79,7 @@ public class UploadHistory implements RBACResource
      *
      * @return the id task
      */
-    public int getIdTask(  )
+    public int getIdTask( )
     {
         return _nIdTask;
     }
@@ -87,30 +87,35 @@ public class UploadHistory implements RBACResource
     /**
      * Sets the id task.
      *
-     * @param idTask the new id task
+     * @param idTask
+     *            the new id task
      */
     public void setIdTask( int idTask )
     {
         _nIdTask = idTask;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see fr.paris.lutece.portal.service.rbac.RBACResource#getResourceId()
      */
     @Override
-    public String getResourceId(  )
+    public String getResourceId( )
     {
         StringBuilder sb = new StringBuilder( _nIdResourceHistory );
         sb.append( SEPARATOR ).append( _nIdTask );
 
-        return sb.toString(  );
+        return sb.toString( );
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see fr.paris.lutece.portal.service.rbac.RBACResource#getResourceTypeCode()
      */
     @Override
-    public String getResourceTypeCode(  )
+    public String getResourceTypeCode( )
     {
         return UPLOAD_RESOURCE_TYPE;
     }

@@ -52,7 +52,6 @@ import javax.inject.Named;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * The Class TaskUpload.
  */
@@ -69,7 +68,7 @@ public class TaskUpload extends Task
      * {@inheritDoc}
      */
     @Override
-    public void init(  )
+    public void init( )
     {
         // Do nothing
     }
@@ -80,29 +79,26 @@ public class TaskUpload extends Task
     @Override
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
-        String strUploadValue = PARAMETER_UPLOAD_VALUE + "_" + this.getId(  );
+        String strUploadValue = PARAMETER_UPLOAD_VALUE + "_" + this.getId( );
 
-        List<FileItem> listFiles = TaskUploadAsynchronousUploadHandler.getHandler(  )
-                                                                      .getListUploadedFiles( strUploadValue,
-                request.getSession(  ) );
+        List<FileItem> listFiles = TaskUploadAsynchronousUploadHandler.getHandler( ).getListUploadedFiles( strUploadValue, request.getSession( ) );
 
-        if( ! listFiles.isEmpty(  ) )
+        if ( !listFiles.isEmpty( ) )
         {
-	        FactoryService.getHistoryService(  )
-	                      .create( nIdResourceHistory, this.getId(  ), listFiles, WorkflowUtils.getPlugin(  ) );
+            FactoryService.getHistoryService( ).create( nIdResourceHistory, this.getId( ), listFiles, WorkflowUtils.getPlugin( ) );
         }
-    	
-        TaskUploadAsynchronousUploadHandler.getHandler(  ).removeSessionFiles( request.getSession(  ).getId(  ) );
+
+        TaskUploadAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ).getId( ) );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void doRemoveConfig(  )
+    public void doRemoveConfig( )
     {
-        _taskUploadConfigService.remove( this.getId(  ) );
-        FactoryService.getHistoryService(  ).removeByTask( this.getId(  ), WorkflowUtils.getPlugin(  ) );
+        _taskUploadConfigService.remove( this.getId( ) );
+        FactoryService.getHistoryService( ).removeByTask( this.getId( ), WorkflowUtils.getPlugin( ) );
     }
 
     /**
@@ -111,7 +107,7 @@ public class TaskUpload extends Task
     @Override
     public void doRemoveTaskInformation( int nIdHistory )
     {
-        FactoryService.getHistoryService(  ).removeByHistory( nIdHistory, this.getId(  ), WorkflowUtils.getPlugin(  ) );
+        FactoryService.getHistoryService( ).removeByHistory( nIdHistory, this.getId( ), WorkflowUtils.getPlugin( ) );
     }
 
     /**
@@ -120,11 +116,11 @@ public class TaskUpload extends Task
     @Override
     public String getTitle( Locale locale )
     {
-        TaskUploadConfig config = _taskUploadConfigService.findByPrimaryKey( this.getId(  ) );
+        TaskUploadConfig config = _taskUploadConfigService.findByPrimaryKey( this.getId( ) );
 
         if ( config != null )
         {
-            return config.getTitle(  );
+            return config.getTitle( );
         }
 
         return StringUtils.EMPTY;
@@ -137,12 +133,12 @@ public class TaskUpload extends Task
     public Map<String, String> getTaskFormEntries( Locale locale )
     {
         Map<String, String> mapEntriesForm = null;
-        TaskUploadConfig config = _taskUploadConfigService.findByPrimaryKey( this.getId(  ) );
+        TaskUploadConfig config = _taskUploadConfigService.findByPrimaryKey( this.getId( ) );
 
         if ( config != null )
         {
-            mapEntriesForm = new HashMap<String, String>(  );
-            mapEntriesForm.put( PARAMETER_UPLOAD_VALUE + "_" + this.getId(  ), config.getTitle(  ) );
+            mapEntriesForm = new HashMap<String, String>( );
+            mapEntriesForm.put( PARAMETER_UPLOAD_VALUE + "_" + this.getId( ), config.getTitle( ) );
         }
 
         return mapEntriesForm;

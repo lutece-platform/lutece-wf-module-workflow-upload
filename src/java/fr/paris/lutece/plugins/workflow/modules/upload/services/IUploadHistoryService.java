@@ -43,7 +43,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
 // TODO: Auto-generated Javadoc
 /**
  * The Interface IUploadHistoryService.
@@ -56,10 +55,14 @@ public interface IUploadHistoryService
     /**
      * Creates the.
      *
-     * @param nIdResourceHistory the n id resource history
-     * @param nidTask the nid task
-     * @param listFiles the list files
-     * @param plugin the plugin
+     * @param nIdResourceHistory
+     *            the n id resource history
+     * @param nidTask
+     *            the nid task
+     * @param listFiles
+     *            the list files
+     * @param plugin
+     *            the plugin
      */
     @Transactional( "workflow.transactionManager" )
     void create( int nIdResourceHistory, int nidTask, List<FileItem> listFiles, Plugin plugin );
@@ -67,9 +70,12 @@ public interface IUploadHistoryService
     /**
      * Removes the by history.
      *
-     * @param nIdHistory the n id history
-     * @param nIdTask the n id task
-     * @param plugin the plugin
+     * @param nIdHistory
+     *            the n id history
+     * @param nIdTask
+     *            the n id task
+     * @param plugin
+     *            the plugin
      */
     @Transactional( "workflow.transactionManager" )
     void removeByHistory( int nIdHistory, int nIdTask, Plugin plugin );
@@ -77,8 +83,10 @@ public interface IUploadHistoryService
     /**
      * Removes the by task.
      *
-     * @param nIdTask the n id task
-     * @param plugin the plugin
+     * @param nIdTask
+     *            the n id task
+     * @param plugin
+     *            the plugin
      */
     @Transactional( "workflow.transactionManager" )
     void removeByTask( int nIdTask, Plugin plugin );
@@ -86,9 +94,12 @@ public interface IUploadHistoryService
     /**
      * Find by primary key.
      *
-     * @param nIdHistory the n id history
-     * @param nIdTask the n id task
-     * @param plugin the plugin
+     * @param nIdHistory
+     *            the n id history
+     * @param nIdTask
+     *            the n id task
+     * @param plugin
+     *            the plugin
      * @return the upload history
      */
     UploadHistory findByPrimaryKey( int nIdHistory, int nIdTask, Plugin plugin );
@@ -96,8 +107,10 @@ public interface IUploadHistoryService
     /**
      * Checks if is owner.
      *
-     * @param nIdHistory the n id history
-     * @param adminUser the admin user
+     * @param nIdHistory
+     *            the n id history
+     * @param adminUser
+     *            the admin user
      * @return true, if is owner
      */
     boolean isOwner( int nIdHistory, AdminUser adminUser );

@@ -37,7 +37,6 @@ import fr.paris.lutece.plugins.workflow.modules.upload.business.file.IUploadFile
 import fr.paris.lutece.plugins.workflow.modules.upload.business.history.IUploadHistoryDAO;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
-
 /**
  * The Class FactoryDOA.
  */
@@ -46,7 +45,7 @@ public final class FactoryDOA
     /**
      * Instantiates a new factory doa.
      */
-    private FactoryDOA(  )
+    private FactoryDOA( )
     {
     }
 
@@ -55,7 +54,7 @@ public final class FactoryDOA
      *
      * @return the upload file dao
      */
-    public static IUploadFileDAO getUploadFileDAO(  )
+    public static IUploadFileDAO getUploadFileDAO( )
     {
         return SpringContextService.getBean( IUploadFileDAO.BEAN_SERVICE );
     }
@@ -65,7 +64,7 @@ public final class FactoryDOA
      *
      * @return the upload history dao
      */
-    public static IUploadHistoryDAO getUploadHistoryDAO(  )
+    public static IUploadHistoryDAO getUploadHistoryDAO( )
     {
         return SpringContextService.getBean( IUploadHistoryDAO.BEAN_SERVICE );
     }

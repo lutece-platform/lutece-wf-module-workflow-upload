@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.workflow.modules.upload.business.history;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 
-
 // TODO: Auto-generated Javadoc
 /**
  * The Interface IUploadHistoryDAO.
@@ -48,17 +47,22 @@ public interface IUploadHistoryDAO
     /**
      * Insert.
      *
-     * @param history the history
-     * @param plugin the plugin
+     * @param history
+     *            the history
+     * @param plugin
+     *            the plugin
      */
     void insert( UploadHistory history, Plugin plugin );
 
     /**
      * Load.
      *
-     * @param nIdHistory the n id history
-     * @param nIdTask the n id task
-     * @param plugin the plugin
+     * @param nIdHistory
+     *            the n id history
+     * @param nIdTask
+     *            the n id task
+     * @param plugin
+     *            the plugin
      * @return the upload history
      */
     UploadHistory load( int nIdHistory, int nIdTask, Plugin plugin );
@@ -66,17 +70,22 @@ public interface IUploadHistoryDAO
     /**
      * Delete by history.
      *
-     * @param nIdHistory the n id history
-     * @param nIdTask the n id task
-     * @param plugin the plugin
+     * @param nIdHistory
+     *            the n id history
+     * @param nIdTask
+     *            the n id task
+     * @param plugin
+     *            the plugin
      */
     void deleteByHistory( int nIdHistory, int nIdTask, Plugin plugin );
 
     /**
      * Delete by task.
      *
-     * @param nIdTask the n id task
-     * @param plugin the plugin
+     * @param nIdTask
+     *            the n id task
+     * @param plugin
+     *            the plugin
      */
     void deleteByTask( int nIdTask, Plugin plugin );
 }

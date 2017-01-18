@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.workflow.modules.upload.business.task;
 
 import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 
-
 /**
  * The Class TaskUploadConfig.
  */
@@ -54,7 +53,7 @@ public class TaskUploadConfig extends TaskConfig
      *
      * @return the title
      */
-    public String getTitle(  )
+    public String getTitle( )
     {
         return _strTitle;
     }
@@ -62,7 +61,8 @@ public class TaskUploadConfig extends TaskConfig
     /**
      * Sets the title.
      *
-     * @param strTitle the new title
+     * @param strTitle
+     *            the new title
      */
     public void setTitle( String strTitle )
     {
@@ -74,7 +74,7 @@ public class TaskUploadConfig extends TaskConfig
      *
      * @return The MaxFile
      */
-    public int getMaxFile(  )
+    public int getMaxFile( )
     {
         return _nMaxFile;
     }
@@ -82,7 +82,8 @@ public class TaskUploadConfig extends TaskConfig
     /**
      * Sets the MaxFile.
      *
-     * @param nMaxFile The MaxFile
+     * @param nMaxFile
+     *            The MaxFile
      */
     public void setMaxFile( int nMaxFile )
     {
@@ -94,7 +95,7 @@ public class TaskUploadConfig extends TaskConfig
      *
      * @return true, if is mandatory
      */
-    public boolean isMandatory(  )
+    public boolean isMandatory( )
     {
         return _bMandatory;
     }
@@ -102,7 +103,8 @@ public class TaskUploadConfig extends TaskConfig
     /**
      * Sets the mandatory.
      *
-     * @param bMandatory the new mandatory
+     * @param bMandatory
+     *            the new mandatory
      */
     public void setMandatory( boolean bMandatory )
     {
@@ -114,7 +116,7 @@ public class TaskUploadConfig extends TaskConfig
      *
      * @return the max size file
      */
-    public int getMaxSizeFile(  )
+    public int getMaxSizeFile( )
     {
         return _nMaxSizeFile;
     }
@@ -122,7 +124,8 @@ public class TaskUploadConfig extends TaskConfig
     /**
      * Sets the max size file.
      *
-     * @param nMaxSizeFile the new max size file
+     * @param nMaxSizeFile
+     *            the new max size file
      */
     public void setMaxSizeFile( int nMaxSizeFile )
     {

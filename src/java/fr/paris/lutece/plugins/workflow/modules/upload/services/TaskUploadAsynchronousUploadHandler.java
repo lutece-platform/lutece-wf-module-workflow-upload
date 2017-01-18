@@ -57,7 +57,6 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-
 /**
  * The Class TaskUploadAsynchronousUploadHandler.
  */
@@ -74,16 +73,17 @@ public class TaskUploadAsynchronousUploadHandler extends AbstractAsynchronousUpl
 
     /** <sessionId,<fieldName,fileItems>> */
     /** contains uploaded file items */
-    private static Map<String, Map<String, List<FileItem>>> _mapAsynchronousUpload = new ConcurrentHashMap<String, Map<String, List<FileItem>>>(  );
+    private static Map<String, Map<String, List<FileItem>>> _mapAsynchronousUpload = new ConcurrentHashMap<String, Map<String, List<FileItem>>>( );
     @Inject
     @Named( TaskUpload.BEAN_UPLOAD_CONFIG_SERVICE )
     private ITaskConfigService _taskUploadConfigService;
 
     /**
-    * Get the handler
-    * @return the handler
-    */
-    public static TaskUploadAsynchronousUploadHandler getHandler(  )
+     * Get the handler
+     * 
+     * @return the handler
+     */
+    public static TaskUploadAsynchronousUploadHandler getHandler( )
     {
         return SpringContextService.getBean( BEAN_TASK_ASYNCHRONOUS_UPLOAD_HANDLER );
     }
@@ -92,12 +92,11 @@ public class TaskUploadAsynchronousUploadHandler extends AbstractAsynchronousUpl
      * {@inheritDoc}
      */
     @Override
-    public String canUploadFiles( HttpServletRequest request, String strFieldName,
-        List<FileItem> listFileItemsToUpload, Locale locale )
+    public String canUploadFiles( HttpServletRequest request, String strFieldName, List<FileItem> listFileItemsToUpload, Locale locale )
     {
-        if ( StringUtils.isNotBlank( strFieldName ) && ( strFieldName.length(  ) > PREFIX_ENTRY_ID.length(  ) ) )
+        if ( StringUtils.isNotBlank( strFieldName ) && ( strFieldName.length( ) > PREFIX_ENTRY_ID.length( ) ) )
         {
-            initMap( request.getSession(  ).getId(  ), strFieldName );
+            initMap( request.getSession( ).getId( ), strFieldName );
 
             String strTask = getEntryIdFromFieldName( strFieldName );
 
@@ -108,14 +107,14 @@ public class TaskUploadAsynchronousUploadHandler extends AbstractAsynchronousUpl
 
             TaskUploadConfig config = _taskUploadConfigService.findByPrimaryKey( Integer.valueOf( strTask ) );
 
-            List<FileItem> list = getListUploadedFiles( strFieldName, request.getSession(  ) );
+            List<FileItem> list = getListUploadedFiles( strFieldName, request.getSession( ) );
             long size = 0;
 
             for ( FileItem fileItem : listFileItemsToUpload )
             {
-                if ( fileItem.getSize(  ) > ( config.getMaxSizeFile(  ) * 1000000 ) )
+                if ( fileItem.getSize( ) > ( config.getMaxSizeFile( ) * 1000000 ) )
                 {
-                    size = fileItem.getSize(  );
+                    size = fileItem.getSize( );
 
                     break;
                 }
@@ -123,19 +122,23 @@ public class TaskUploadAsynchronousUploadHandler extends AbstractAsynchronousUpl
 
             if ( size > 0 )
             {
-                Object[] tabRequiredFields = { config.getMaxSizeFile(  ) };
+                Object [ ] tabRequiredFields = {
+                    config.getMaxSizeFile( )
+                };
 
                 return I18nService.getLocalizedString( ERROR_MESSAGE_MAX_size_FILE, tabRequiredFields, locale );
             }
 
-            if ( config.getMaxFile(  ) <= list.size(  ) )
+            if ( config.getMaxFile( ) <= list.size( ) )
             {
-                Object[] tabRequiredFields = { config.getMaxFile(  ) };
+                Object [ ] tabRequiredFields = {
+                    config.getMaxFile( )
+                };
 
                 return I18nService.getLocalizedString( ERROR_MESSAGE_MAX_FILE, tabRequiredFields, locale );
             }
 
-            //  _taskUploadConfigService. 
+            // _taskUploadConfigService.
             return null;
         }
 
@@ -153,10 +156,10 @@ public class TaskUploadAsynchronousUploadHandler extends AbstractAsynchronousUpl
             throw new AppException( "id field name is not provided for the current file upload" );
         }
 
-        initMap( session.getId(  ), strFieldName );
+        initMap( session.getId( ), strFieldName );
 
         // find session-related files in the map
-        Map<String, List<FileItem>> mapFileItemsSession = _mapAsynchronousUpload.get( session.getId(  ) );
+        Map<String, List<FileItem>> mapFileItemsSession = _mapAsynchronousUpload.get( session.getId( ) );
 
         return mapFileItemsSession.get( strFieldName );
     }
@@ -169,30 +172,29 @@ public class TaskUploadAsynchronousUploadHandler extends AbstractAsynchronousUpl
     {
         // This is the name that will be displayed in the form. We keep
         // the original name, but clean it to make it cross-platform.
-        String strFileName = UploadUtil.cleanFileName( fileItem.getName(  ).trim(  ) );
+        String strFileName = UploadUtil.cleanFileName( fileItem.getName( ).trim( ) );
 
-        initMap( request.getSession(  ).getId(  ), buildFieldName( strFieldName ) );
+        initMap( request.getSession( ).getId( ), buildFieldName( strFieldName ) );
 
         // Check if this file has not already been uploaded
-        List<FileItem> uploadedFiles = getListUploadedFiles( strFieldName, request.getSession(  ) );
+        List<FileItem> uploadedFiles = getListUploadedFiles( strFieldName, request.getSession( ) );
 
         if ( uploadedFiles != null )
         {
             boolean bNew = true;
 
-            if ( !uploadedFiles.isEmpty(  ) )
+            if ( !uploadedFiles.isEmpty( ) )
             {
-                Iterator<FileItem> iterUploadedFiles = uploadedFiles.iterator(  );
+                Iterator<FileItem> iterUploadedFiles = uploadedFiles.iterator( );
 
-                while ( bNew && iterUploadedFiles.hasNext(  ) )
+                while ( bNew && iterUploadedFiles.hasNext( ) )
                 {
-                    FileItem uploadedFile = iterUploadedFiles.next(  );
-                    String strUploadedFileName = UploadUtil.cleanFileName( uploadedFile.getName(  ).trim(  ) );
+                    FileItem uploadedFile = iterUploadedFiles.next( );
+                    String strUploadedFileName = UploadUtil.cleanFileName( uploadedFile.getName( ).trim( ) );
                     // If we find a file with the same name and the same
                     // length, we consider that the current file has
                     // already been uploaded
-                    bNew = !( StringUtils.equals( strUploadedFileName, strFileName ) &&
-                        ( uploadedFile.getSize(  ) == fileItem.getSize(  ) ) );
+                    bNew = !( StringUtils.equals( strUploadedFileName, strFileName ) && ( uploadedFile.getSize( ) == fileItem.getSize( ) ) );
                 }
             }
 
@@ -212,17 +214,19 @@ public class TaskUploadAsynchronousUploadHandler extends AbstractAsynchronousUpl
         // Remove the file (this will also delete the file physically)
         List<FileItem> uploadedFiles = getListUploadedFiles( strFieldName, session );
 
-        if ( ( uploadedFiles != null ) && !uploadedFiles.isEmpty(  ) && ( uploadedFiles.size(  ) > nIndex ) )
+        if ( ( uploadedFiles != null ) && !uploadedFiles.isEmpty( ) && ( uploadedFiles.size( ) > nIndex ) )
         {
             // Remove the object from the Hashmap
             FileItem fileItem = uploadedFiles.remove( nIndex );
-            fileItem.delete(  );
+            fileItem.delete( );
         }
     }
 
     /**
      * Removes all files associated to the session
-     * @param strSessionId the session id
+     * 
+     * @param strSessionId
+     *            the session id
      */
     public void removeSessionFiles( String strSessionId )
     {
@@ -230,9 +234,10 @@ public class TaskUploadAsynchronousUploadHandler extends AbstractAsynchronousUpl
     }
 
     /**
-     * Build the field name from a given id entry
-     * i.e. : form_1
-     * @param strIdEntry the id entry
+     * Build the field name from a given id entry i.e. : form_1
+     * 
+     * @param strIdEntry
+     *            the id entry
      * @return the field name
      */
     protected String buildFieldName( String strIdEntry )
@@ -242,23 +247,28 @@ public class TaskUploadAsynchronousUploadHandler extends AbstractAsynchronousUpl
 
     /**
      * Get the id of the entry associated with a given field name
-     * @param strFieldName The name of the field
+     * 
+     * @param strFieldName
+     *            The name of the field
      * @return The id of the entry
      */
     protected String getEntryIdFromFieldName( String strFieldName )
     {
-        if ( StringUtils.isEmpty( strFieldName ) || ( strFieldName.length(  ) < PREFIX_ENTRY_ID.length(  ) ) )
+        if ( StringUtils.isEmpty( strFieldName ) || ( strFieldName.length( ) < PREFIX_ENTRY_ID.length( ) ) )
         {
             return null;
         }
 
-        return strFieldName.substring( PREFIX_ENTRY_ID.length(  ) );
+        return strFieldName.substring( PREFIX_ENTRY_ID.length( ) );
     }
 
     /**
      * Init the map
-     * @param strSessionId the session id
-     * @param strFieldName the field name
+     * 
+     * @param strSessionId
+     *            the session id
+     * @param strFieldName
+     *            the field name
      */
     private void initMap( String strSessionId, String strFieldName )
     {
@@ -268,14 +278,14 @@ public class TaskUploadAsynchronousUploadHandler extends AbstractAsynchronousUpl
         // create map if not exists
         if ( mapFileItemsSession == null )
         {
-            synchronized ( this )
+            synchronized( this )
             {
                 // Ignore double check locking error : assignation and instanciation of objects are separated.
                 mapFileItemsSession = _mapAsynchronousUpload.get( strSessionId );
 
                 if ( mapFileItemsSession == null )
                 {
-                    mapFileItemsSession = new ConcurrentHashMap<String, List<FileItem>>(  );
+                    mapFileItemsSession = new ConcurrentHashMap<String, List<FileItem>>( );
                     _mapAsynchronousUpload.put( strSessionId, mapFileItemsSession );
                 }
             }
@@ -285,13 +295,13 @@ public class TaskUploadAsynchronousUploadHandler extends AbstractAsynchronousUpl
 
         if ( listFileItems == null )
         {
-            listFileItems = new ArrayList<FileItem>(  );
+            listFileItems = new ArrayList<FileItem>( );
             mapFileItemsSession.put( strFieldName, listFileItems );
         }
     }
 
     @Override
-    public String getHandlerName(  )
+    public String getHandlerName( )
     {
         return HANDLER_NAME;
     }

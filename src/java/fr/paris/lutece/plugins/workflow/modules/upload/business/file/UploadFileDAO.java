@@ -40,7 +40,6 @@ import fr.paris.lutece.util.sql.DAOUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-
 // TODO: Auto-generated Javadoc
 /**
  * The Class UploadFileDAO.
@@ -51,14 +50,12 @@ public class UploadFileDAO implements IUploadFileDAO
     private static final String SQL_QUERY_NEW_PK = "SELECT max( id_upload_file ) FROM workflow_task_upload_files";
 
     /** The Constant SQL_QUERY_FIND_BY_HISTORY. */
-    private static final String SQL_QUERY_FIND_BY_HISTORY = "SELECT id_upload_file,id_file,id_history  " +
-        "FROM workflow_task_upload_files WHERE id_history=?";
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_upload_file,id_file,id_history  " +
-        "FROM workflow_task_upload_files WHERE id_upload_file=?";
+    private static final String SQL_QUERY_FIND_BY_HISTORY = "SELECT id_upload_file,id_file,id_history  " + "FROM workflow_task_upload_files WHERE id_history=?";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_upload_file,id_file,id_history  "
+            + "FROM workflow_task_upload_files WHERE id_upload_file=?";
 
     /** The Constant SQL_QUERY_INSERT. */
-    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_upload_files " +
-        "(id_upload_file,id_file,id_history)VALUES(?,?,?)";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_upload_files " + "(id_upload_file,id_file,id_history)VALUES(?,?,?)";
 
     /** The Constant SQL_QUERY_DELETE_BY_HISTORY. */
     private static final String SQL_QUERY_DELETE_BY_HISTORY = "DELETE FROM workflow_task_upload_files  WHERE id_history=?";
@@ -69,22 +66,23 @@ public class UploadFileDAO implements IUploadFileDAO
     /**
      * Generates a new primary key.
      *
-     * @param plugin The Plugin
+     * @param plugin
+     *            The Plugin
      * @return The new primary key
      */
     public int newPrimaryKey( Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PK, plugin );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
         int nKey = 1;
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
             nKey = daoUtil.getInt( 1 ) + 1;
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return nKey;
     }
@@ -101,12 +99,12 @@ public class UploadFileDAO implements IUploadFileDAO
 
         int nPos = 0;
 
-        daoUtil.setInt( ++nPos, upload.getIdUploadFile(  ) );
-        daoUtil.setInt( ++nPos, upload.getIdFile(  ) );
-        daoUtil.setInt( ++nPos, upload.getIdHistory(  ) );
+        daoUtil.setInt( ++nPos, upload.getIdUploadFile( ) );
+        daoUtil.setInt( ++nPos, upload.getIdFile( ) );
+        daoUtil.setInt( ++nPos, upload.getIdHistory( ) );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -121,26 +119,26 @@ public class UploadFileDAO implements IUploadFileDAO
         int nPos = 0;
         daoUtil.setInt( ++nPos, nIdHistory );
 
-        List<UploadFile> fileList = new ArrayList<UploadFile>(  );
+        List<UploadFile> fileList = new ArrayList<UploadFile>( );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        while ( daoUtil.next(  ) )
+        while ( daoUtil.next( ) )
         {
             nPos = 0;
-            uploadUpload = new UploadFile(  );
+            uploadUpload = new UploadFile( );
             uploadUpload.setIdUploadFile( daoUtil.getInt( ++nPos ) );
             uploadUpload.setIdFile( daoUtil.getInt( ++nPos ) );
             uploadUpload.setIdHistory( daoUtil.getInt( ++nPos ) );
-            uploadUpload.setFile( FileHome.findByPrimaryKey( uploadUpload.getIdFile(  ) ) );
+            uploadUpload.setFile( FileHome.findByPrimaryKey( uploadUpload.getIdFile( ) ) );
 
-            if ( uploadUpload.getFile(  ) != null )
+            if ( uploadUpload.getFile( ) != null )
             {
                 fileList.add( uploadUpload );
             }
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return fileList;
     }
@@ -155,8 +153,8 @@ public class UploadFileDAO implements IUploadFileDAO
         int nPos = 0;
         daoUtil.setInt( ++nPos, nIdHistory );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -168,8 +166,8 @@ public class UploadFileDAO implements IUploadFileDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_ID, plugin );
         int nPos = 0;
         daoUtil.setInt( ++nPos, nIdFileUpload );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     @Override
@@ -180,20 +178,20 @@ public class UploadFileDAO implements IUploadFileDAO
         int nPos = 0;
         daoUtil.setInt( ++nPos, nIdFileUpload );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
         nPos = 0;
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
-            uploadUpload = new UploadFile(  );
+            uploadUpload = new UploadFile( );
             uploadUpload.setIdUploadFile( daoUtil.getInt( ++nPos ) );
             uploadUpload.setIdFile( daoUtil.getInt( ++nPos ) );
             uploadUpload.setIdHistory( daoUtil.getInt( ++nPos ) );
-            uploadUpload.setFile( FileHome.findByPrimaryKey( uploadUpload.getIdFile(  ) ) );
+            uploadUpload.setFile( FileHome.findByPrimaryKey( uploadUpload.getIdFile( ) ) );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return uploadUpload;
     }

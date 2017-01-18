@@ -37,7 +37,6 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 
 import java.util.List;
 
-
 // TODO: Auto-generated Javadoc
 /**
  * The Interface IUploadFileDAO.
@@ -50,16 +49,20 @@ public interface IUploadFileDAO
     /**
      * Insert.
      *
-     * @param upload the upload
-     * @param plugin the plugin
+     * @param upload
+     *            the upload
+     * @param plugin
+     *            the plugin
      */
     void insert( UploadFile upload, Plugin plugin );
 
     /**
      * Findbyprimary key.
      *
-     * @param nIdFileUpload the n id file upload
-     * @param plugin the plugin
+     * @param nIdFileUpload
+     *            the n id file upload
+     * @param plugin
+     *            the plugin
      * @return the upload file
      */
     UploadFile findbyprimaryKey( int nIdFileUpload, Plugin plugin );
@@ -67,8 +70,10 @@ public interface IUploadFileDAO
     /**
      * Load.
      *
-     * @param nIdHistory the n id upload
-     * @param plugin the plugin
+     * @param nIdHistory
+     *            the n id upload
+     * @param plugin
+     *            the plugin
      * @return the list
      */
     List<UploadFile> load( int nIdHistory, Plugin plugin );
@@ -76,16 +81,20 @@ public interface IUploadFileDAO
     /**
      * Delete by history.
      *
-     * @param nIdUpload the n id upload
-     * @param plugin the plugin
+     * @param nIdUpload
+     *            the n id upload
+     * @param plugin
+     *            the plugin
      */
     void deleteByHistory( int nIdUpload, Plugin plugin );
 
     /**
      * Delete by file.
      *
-     * @param nIdUpload the n id file
-     * @param plugin the plugin
+     * @param nIdUpload
+     *            the n id file
+     * @param plugin
+     *            the plugin
      */
     void deleteByid( int nIdUpload, Plugin plugin );
 }

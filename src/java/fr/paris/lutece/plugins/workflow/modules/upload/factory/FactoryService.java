@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.workflow.modules.upload.factory;
 import fr.paris.lutece.plugins.workflow.modules.upload.services.IUploadHistoryService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
-
 /**
  * The Class FactoryService.
  */
@@ -45,7 +44,7 @@ public final class FactoryService
     /**
      * Instantiates a new factory service.
      */
-    private FactoryService(  )
+    private FactoryService( )
     {
     }
 
@@ -54,7 +53,7 @@ public final class FactoryService
      *
      * @return the history service
      */
-    public static IUploadHistoryService getHistoryService(  )
+    public static IUploadHistoryService getHistoryService( )
     {
         return SpringContextService.getBean( IUploadHistoryService.BEAN_SERVICE );
     }
