@@ -149,7 +149,7 @@ public class UploadHistoryService implements IUploadHistoryService
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdHistory );
         AdminUser userOwner = AdminUserHome.findUserByLogin( resourceHistory.getUserAccessCode( ) );
 
-        return userOwner.getUserId( ) == adminUser.getUserId( );
+        return ( ( userOwner != null ) && ( userOwner.getUserId( ) == adminUser.getUserId( ) ) );
     }
 
     /**
