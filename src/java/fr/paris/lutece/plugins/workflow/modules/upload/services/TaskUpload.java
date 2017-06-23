@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.workflow.modules.upload.services;
 
 import fr.paris.lutece.plugins.workflow.modules.upload.business.task.TaskUploadConfig;
+import fr.paris.lutece.plugins.workflow.modules.upload.factory.FactoryDOA;
 import fr.paris.lutece.plugins.workflow.modules.upload.factory.FactoryService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
@@ -108,6 +109,7 @@ public class TaskUpload extends Task
     public void doRemoveTaskInformation( int nIdHistory )
     {
         FactoryService.getHistoryService( ).removeByHistory( nIdHistory, this.getId( ), WorkflowUtils.getPlugin( ) );
+        FactoryDOA.getUploadFileDAO( ).deleteByHistory( nIdHistory, WorkflowUtils.getPlugin( ) );
     }
 
     /**
