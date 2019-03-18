@@ -43,4 +43,12 @@
          <value>wkFileDownload</value>
       </property>
    </bean>
+   
+    <!-- TaskInfoProvider -->
+    <bean id="workflow-upload.uploadTaskInfoProvider" class="fr.paris.lutece.plugins.workflow.modules.upload.services.taskinfo.UploadTaskInfoProvider"
+		p:taskType-ref="workflow-upload.taskTypeUpload" />
+    
+    <!-- Marker provider -->
+    <bean id="workflow-upload.uploadMarkerProvider"   class="fr.paris.lutece.plugins.workflow.modules.upload.services.provider.UploadMarkerProvider" />
+       
 </beans>
