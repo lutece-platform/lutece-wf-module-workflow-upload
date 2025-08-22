@@ -46,46 +46,19 @@ import java.util.List;
  */
 public class UploadFileDAO implements IUploadFileDAO
 {
-    /** The Constant SQL_QUERY_NEW_PK. */
-    private static final String SQL_QUERY_NEW_PK = "SELECT max( id_upload_file ) FROM workflow_task_upload_files";
-
     /** The Constant SQL_QUERY_FIND_BY_HISTORY. */
     private static final String SQL_QUERY_FIND_BY_HISTORY = "SELECT id_upload_file,id_file,id_history  " + "FROM workflow_task_upload_files WHERE id_history=?";
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_upload_file,id_file,id_history  "
             + "FROM workflow_task_upload_files WHERE id_upload_file=?";
 
     /** The Constant SQL_QUERY_INSERT. */
-    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_upload_files " + "(id_upload_file,id_file,id_history)VALUES(?,?,?)";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_upload_files " + "(id_file,id_history)VALUES(?,?)";
 
     /** The Constant SQL_QUERY_DELETE_BY_HISTORY. */
     private static final String SQL_QUERY_DELETE_BY_HISTORY = "DELETE FROM workflow_task_upload_files  WHERE id_history=?";
 
     /** The Constant SQL_QUERY_DELETE_BY_FILE. */
     private static final String SQL_QUERY_DELETE_BY_ID = "DELETE FROM workflow_task_upload_files  WHERE id_upload_file=?";
-
-    /**
-     * Generates a new primary key.
-     *
-     * @param plugin
-     *            The Plugin
-     * @return The new primary key
-     */
-    public int newPrimaryKey( Plugin plugin )
-    {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PK, plugin );
-        daoUtil.executeQuery( );
-
-        int nKey = 1;
-
-        if ( daoUtil.next( ) )
-        {
-            nKey = daoUtil.getInt( 1 ) + 1;
-        }
-
-        daoUtil.free( );
-
-        return nKey;
-    }
 
     /**
      * {@inheritDoc}
@@ -95,11 +68,8 @@ public class UploadFileDAO implements IUploadFileDAO
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
 
-        upload.setIdUploadFile( newPrimaryKey( plugin ) );
-
         int nPos = 0;
 
-        daoUtil.setInt( ++nPos, upload.getIdUploadFile( ) );
         daoUtil.setInt( ++nPos, upload.getIdFile( ) );
         daoUtil.setInt( ++nPos, upload.getIdHistory( ) );
 

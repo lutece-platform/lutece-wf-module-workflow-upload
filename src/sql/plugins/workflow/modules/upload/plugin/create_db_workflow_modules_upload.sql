@@ -20,7 +20,7 @@ CREATE TABLE workflow_task_upload_config
 -- ---------------------------------------------------------
 CREATE TABLE workflow_task_upload_files
 (
-	id_upload_file INT DEFAULT 0 NOT NULL,
+	id_upload_file INT auto_increment NOT NULL,
 	id_history INT DEFAULT 0 NOT NULL,
 	id_file  INT DEFAULT 0 NOT NULL,
 	PRIMARY KEY (id_upload_file)
