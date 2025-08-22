@@ -1,3 +1,6 @@
+-- liquibase formatted sql
+-- changeset workflow-upload:create_db_workflow_modules_upload.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 
 DROP TABLE IF EXISTS workflow_task_upload_config;
 DROP TABLE IF EXISTS workflow_task_upload_history;

@@ -258,24 +258,4 @@ public class UploadTaskComponent extends AbstractTaskComponent
         return template.getHtml( );
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
-    {
-        StringBuffer strXml = new StringBuffer( );
-        UploadHistory uploadValue = FactoryService.getHistoryService( ).findByPrimaryKey( nIdHistory, task.getId( ), WorkflowUtils.getPlugin( ) );
-
-        if ( uploadValue != null )
-        {
-            XmlUtil.addElementHtml( strXml, TAG_UPLOAD, "dddd" );
-        }
-        else
-        {
-            XmlUtil.addEmptyElement( strXml, TAG_UPLOAD, null );
-        }
-
-        return strXml.toString( );
-    }
 }
