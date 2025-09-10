@@ -34,10 +34,14 @@
 package fr.paris.lutece.plugins.workflow.modules.upload.business.task;
 
 import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Named;
 
 /**
  * The Class TaskUploadConfig.
  */
+@Dependent
+@Named( "workflow-upload.taskUploadConfig" )
 public class TaskUploadConfig extends TaskConfig
 {
     /** The _n max file. */

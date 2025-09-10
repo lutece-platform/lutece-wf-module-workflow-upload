@@ -33,14 +33,13 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.upload.services;
 
+import fr.paris.lutece.plugins.workflow.modules.upload.business.file.IUploadFileDAO;
 import fr.paris.lutece.plugins.workflow.modules.upload.business.task.TaskUploadConfig;
-import fr.paris.lutece.plugins.workflow.modules.upload.factory.FactoryDOA;
-import fr.paris.lutece.plugins.workflow.modules.upload.factory.FactoryService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.Task;
+import fr.paris.lutece.portal.service.upload.MultipartItem;
 
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;
@@ -48,14 +47,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * The Class TaskUpload.
  */
+@Dependent
+@Named( "workflow-upload.taskUpload" )
 public class TaskUpload extends Task
 {
     /** The Constant BEAN_UPLOAD_CONFIG_SERVICE. */
@@ -64,7 +66,16 @@ public class TaskUpload extends Task
     @Inject
     @Named( BEAN_UPLOAD_CONFIG_SERVICE )
     private ITaskConfigService _taskUploadConfigService;
+    
+    @Inject
+    private IUploadHistoryService _uploadHistoryService;
 
+    @Inject
+    private IUploadFileDAO _uploadFileDAO;
+    
+    @Inject
+    private TaskUploadAsynchronousUploadHandler _taskUploadAsynchronousUploadHandler;
+    
     /**
      * {@inheritDoc}
      */
@@ -82,14 +93,14 @@ public class TaskUpload extends Task
     {
         String strUploadValue = PARAMETER_UPLOAD_VALUE + "_" + this.getId( );
 
-        List<FileItem> listFiles = TaskUploadAsynchronousUploadHandler.getHandler( ).getListUploadedFiles( strUploadValue, request.getSession( ) );
+        List<MultipartItem> listFiles = _taskUploadAsynchronousUploadHandler.getListUploadedFiles( strUploadValue, request.getSession( ) );
 
         if ( !listFiles.isEmpty( ) )
         {
-            FactoryService.getHistoryService( ).create( nIdResourceHistory, this.getId( ), listFiles, WorkflowUtils.getPlugin( ) );
+        	_uploadHistoryService.create( nIdResourceHistory, this.getId( ), listFiles, WorkflowUtils.getPlugin( ) );
         }
 
-        TaskUploadAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ).getId( ) );
+        _taskUploadAsynchronousUploadHandler.removeSessionFiles( request.getSession( ).getId( ) );
     }
 
     /**
@@ -99,7 +110,7 @@ public class TaskUpload extends Task
     public void doRemoveConfig( )
     {
         _taskUploadConfigService.remove( this.getId( ) );
-        FactoryService.getHistoryService( ).removeByTask( this.getId( ), WorkflowUtils.getPlugin( ) );
+        _uploadHistoryService.removeByTask( this.getId( ), WorkflowUtils.getPlugin( ) );
     }
 
     /**
@@ -108,8 +119,8 @@ public class TaskUpload extends Task
     @Override
     public void doRemoveTaskInformation( int nIdHistory )
     {
-        FactoryService.getHistoryService( ).removeByHistory( nIdHistory, this.getId( ), WorkflowUtils.getPlugin( ) );
-        FactoryDOA.getUploadFileDAO( ).deleteByHistory( nIdHistory, WorkflowUtils.getPlugin( ) );
+    	_uploadHistoryService.removeByHistory( nIdHistory, this.getId( ), WorkflowUtils.getPlugin( ) );
+        _uploadFileDAO.deleteByHistory( nIdHistory, WorkflowUtils.getPlugin( ) );
     }
 
     /**

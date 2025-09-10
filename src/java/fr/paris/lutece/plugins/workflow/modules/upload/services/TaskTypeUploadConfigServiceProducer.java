@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2016, Mairie de Paris
+ * Copyright (c) 2002-2025, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,30 +31,27 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.upload.factory;
+package fr.paris.lutece.plugins.workflow.modules.upload.services;
 
-import fr.paris.lutece.plugins.workflow.modules.upload.services.IUploadHistoryService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.plugins.workflow.modules.upload.business.task.TaskUploadConfig;
+import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfigDAO;
+import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
+import fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Named;
 
-/**
- * The Class FactoryService.
- */
-public final class FactoryService
+@ApplicationScoped
+public class TaskTypeUploadConfigServiceProducer
 {
-    /**
-     * Instantiates a new factory service.
-     */
-    private FactoryService( )
+	@Produces
+    @ApplicationScoped
+    @Named( "workflow-upload.taskUploadConfigService" )
+    public ITaskConfigService produceTaskTypeUploadConfigService(
+            @Named( "workflow-upload.taskUploadConfigDAO" ) ITaskConfigDAO<TaskUploadConfig> taskTypeUploadConfigDAO )
     {
-    }
-
-    /**
-     * Gets the history service.
-     *
-     * @return the history service
-     */
-    public static IUploadHistoryService getHistoryService( )
-    {
-        return SpringContextService.getBean( IUploadHistoryService.BEAN_SERVICE );
+        TaskConfigService taskService = new TaskConfigService( );
+        taskService.setTaskConfigDAO( (ITaskConfigDAO) taskTypeUploadConfigDAO );
+        return taskService;
     }
 }

@@ -33,21 +33,17 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.upload.web;
 
+import fr.paris.lutece.api.user.User;
+import fr.paris.lutece.plugins.workflow.modules.upload.business.file.IUploadFileDAO;
 import fr.paris.lutece.plugins.workflow.modules.upload.business.file.UploadFile;
 import fr.paris.lutece.plugins.workflow.modules.upload.business.history.UploadHistory;
-import fr.paris.lutece.plugins.workflow.modules.upload.factory.FactoryDOA;
-import fr.paris.lutece.plugins.workflow.modules.upload.factory.FactoryService;
 import fr.paris.lutece.plugins.workflow.modules.upload.services.IUploadHistoryService;
-import fr.paris.lutece.plugins.workflow.modules.upload.services.UploadHistoryService;
 import fr.paris.lutece.plugins.workflow.modules.upload.services.UploadResourceIdService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
-import fr.paris.lutece.plugins.workflow.web.task.TaskComponentManager;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
-import fr.paris.lutece.plugins.workflowcore.service.resource.ResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
-import fr.paris.lutece.plugins.workflowcore.service.task.TaskService;
 import fr.paris.lutece.plugins.workflowcore.web.task.ITaskComponentManager;
 import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.user.AdminUser;
@@ -56,7 +52,6 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
 import fr.paris.lutece.util.url.UrlItem;
 
@@ -70,11 +65,16 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This class manages uploaded files.
  */
+@RequestScoped
+@Named
 public class UploadJspBean extends MVCAdminJspBean
 {
     /** Generated serial id. */
@@ -104,11 +104,21 @@ public class UploadJspBean extends MVCAdminJspBean
     private static final String PARAMETER_ENCODING = "UTF-8";
 
     // Services
-    private IUploadHistoryService _uploadHistoryService = SpringContextService.getBean( UploadHistoryService.BEAN_SERVICE );
-    private IResourceHistoryService _resourceHistoryService = SpringContextService.getBean( ResourceHistoryService.BEAN_SERVICE );
-    private ITaskService _taskService = SpringContextService.getBean( TaskService.BEAN_SERVICE );
-    private ITaskComponentManager _taskComponentManager = SpringContextService.getBean( TaskComponentManager.BEAN_MANAGER );
+    @Inject
+    private IUploadHistoryService _uploadHistoryService;
+    
+    @Inject
+    private IResourceHistoryService _resourceHistoryService;
+    
+    @Inject
+    private ITaskService _taskService;
+    
+    @Inject
+    private ITaskComponentManager _taskComponentManager;
 
+    @Inject
+    private IUploadFileDAO _uploadFileDAO;
+    
     /**
      * Gets the confirm remove upload.
      *
@@ -138,7 +148,7 @@ public class UploadJspBean extends MVCAdminJspBean
         url.addParameter( PARAMETER_ID_TASK, strIdTask );
         url.addParameter( PARAMETER_RETURN_URL, URLEncoder.encode( strReturnUrl, PARAMETER_ENCODING ) );
 
-        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_UPLOAD, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
+        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_UPLOAD, null, null, url.getUrl( ), null, AdminMessage.TYPE_CONFIRMATION, null, strReturnUrl );
     }
 
     /**
@@ -167,15 +177,15 @@ public class UploadJspBean extends MVCAdminJspBean
         int nIdTask = WorkflowUtils.convertStringToInt( strIdTask );
 
         // removing list file
-        UploadFile uploadFile = FactoryDOA.getUploadFileDAO( ).findbyprimaryKey( nIdFileUpload, WorkflowUtils.getPlugin( ) );
+        UploadFile uploadFile = _uploadFileDAO.findbyprimaryKey( nIdFileUpload, WorkflowUtils.getPlugin( ) );
 
         if ( uploadFile != null )
         {
             FileHome.remove( uploadFile.getIdFile( ) );
-            FactoryDOA.getUploadFileDAO( ).deleteByid( nIdFileUpload, WorkflowUtils.getPlugin( ) );
+            _uploadFileDAO.deleteByid( nIdFileUpload, WorkflowUtils.getPlugin( ) );
         }
 
-        List<UploadFile> listFile = FactoryDOA.getUploadFileDAO( ).load( nIdHistory, WorkflowUtils.getPlugin( ) );
+        List<UploadFile> listFile = _uploadFileDAO.load( nIdHistory, WorkflowUtils.getPlugin( ) );
 
         // Remove task history if not other file in the task
         if ( listFile.isEmpty( ) )
@@ -227,10 +237,10 @@ public class UploadJspBean extends MVCAdminJspBean
         int nIdTask = WorkflowUtils.convertStringToInt( strIdTask );
         AdminUser userConnected = AdminUserService.getAdminUser( request );
 
-        UploadHistory uploadValue = FactoryService.getHistoryService( ).findByPrimaryKey( nIdHistory, nIdTask, WorkflowUtils.getPlugin( ) );
+        UploadHistory uploadValue = _uploadHistoryService.findByPrimaryKey( nIdHistory, nIdTask, WorkflowUtils.getPlugin( ) );
 
-        boolean bHasPermissionDeletion = RBACService.isAuthorized( uploadValue, UploadResourceIdService.PERMISSION_DELETE, userConnected );
-        boolean bIsOwner = FactoryService.getHistoryService( ).isOwner( nIdHistory, userConnected );
+        boolean bHasPermissionDeletion = RBACService.isAuthorized( uploadValue, UploadResourceIdService.PERMISSION_DELETE, ( User ) userConnected );
+        boolean bIsOwner = _uploadHistoryService.isOwner( nIdHistory, userConnected );
 
         return bHasPermissionDeletion || bIsOwner;
     }

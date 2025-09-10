@@ -33,16 +33,19 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.upload.services.taskinfo;
 
+import fr.paris.lutece.plugins.workflow.modules.upload.business.file.IUploadFileDAO;
 import fr.paris.lutece.plugins.workflow.modules.upload.business.file.UploadFile;
-import fr.paris.lutece.plugins.workflow.modules.upload.factory.FactoryDOA;
 import fr.paris.lutece.plugins.workflow.modules.upload.services.download.DownloadFileService;
 import fr.paris.lutece.plugins.workflow.service.taskinfo.AbstractTaskInfoProvider;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import java.util.List;
 
-
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -51,12 +54,23 @@ import net.sf.json.JSONObject;
  * UploadTaskInfoProvider
  *
  */
+@ApplicationScoped
+@Named( "workflow-upload.uploadTaskInfoProvider" )
 public class UploadTaskInfoProvider extends AbstractTaskInfoProvider
 {
     private static final String KEY_URL_LIST = "url_list";
     private static final String KEY_FILE_NAME = "file_name";
     private static final String KEY_FILE_URL = "file_url";
 
+    @Inject
+    private IUploadFileDAO _uploadFileDAO;
+    
+    @Inject
+    public UploadTaskInfoProvider( @Named( "workflow-upload.taskTypeUpload" ) ITaskType taskType )
+    {
+        setTaskType( taskType );
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -74,7 +88,7 @@ public class UploadTaskInfoProvider extends AbstractTaskInfoProvider
     {
         JSONObject jsonInfos = new JSONObject( );
 
-        List<UploadFile> uploadFileList = FactoryDOA.getUploadFileDAO( ).load( nIdHistory, WorkflowUtils.getPlugin( ) );
+        List<UploadFile> uploadFileList = _uploadFileDAO.load( nIdHistory, WorkflowUtils.getPlugin( ) );
 
         JSONArray jsonUrlList = new JSONArray( );
         if ( uploadFileList != null )
@@ -83,8 +97,8 @@ public class UploadTaskInfoProvider extends AbstractTaskInfoProvider
             {
                 String strDownloadUrl = DownloadFileService.getUrlDownloadFile( uploadFile.getIdFile( ), AppPathService.getBaseUrl( request ) ) ;
                 JSONObject fileItem = new JSONObject( );
-                fileItem.accumulate(KEY_FILE_NAME, uploadFile.getFile( ).getTitle( ) );
-                fileItem.accumulate(KEY_FILE_URL, strDownloadUrl );
+                fileItem.accumulate( KEY_FILE_NAME, uploadFile.getFile( ).getTitle( ) );
+                fileItem.accumulate( KEY_FILE_URL, strDownloadUrl );
                 
                 jsonUrlList.add( fileItem );
             }

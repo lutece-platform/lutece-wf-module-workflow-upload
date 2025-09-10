@@ -35,11 +35,13 @@ package fr.paris.lutece.plugins.workflow.modules.upload.business.history;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class UploadHistoryDAO.
  */
+@ApplicationScoped
 public class UploadHistoryDAO implements IUploadHistoryDAO
 {
     /** The Constant SQL_QUERY_FIND_BY_PRIMARY_KEY. */
@@ -61,15 +63,15 @@ public class UploadHistoryDAO implements IUploadHistoryDAO
     @Override
     public synchronized void insert( UploadHistory history, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin ) )
+        {
+            int nPos = 0;
 
-        int nPos = 0;
+            daoUtil.setInt( ++nPos, history.getIdResourceHistory( ) );
+            daoUtil.setInt( ++nPos, history.getIdTask( ) );
 
-        daoUtil.setInt( ++nPos, history.getIdResourceHistory( ) );
-        daoUtil.setInt( ++nPos, history.getIdTask( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -80,23 +82,23 @@ public class UploadHistoryDAO implements IUploadHistoryDAO
     {
         UploadHistory uploadHistory = null;
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin );
-        int nPos = 0;
-        daoUtil.setInt( ++nPos, nIdHistory );
-        daoUtil.setInt( ++nPos, nIdTask );
-
-        nPos = 0;
-
-        daoUtil.executeQuery( );
-
-        if ( daoUtil.next( ) )
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin ) )
         {
-            uploadHistory = new UploadHistory( );
-            uploadHistory.setIdResourceHistory( daoUtil.getInt( ++nPos ) );
-            uploadHistory.setIdTask( daoUtil.getInt( ++nPos ) );
-        }
+        	int nPos = 0;
+            daoUtil.setInt( ++nPos, nIdHistory );
+            daoUtil.setInt( ++nPos, nIdTask );
 
-        daoUtil.free( );
+            nPos = 0;
+
+            daoUtil.executeQuery( );
+
+            if ( daoUtil.next( ) )
+            {
+                uploadHistory = new UploadHistory( );
+                uploadHistory.setIdResourceHistory( daoUtil.getInt( ++nPos ) );
+                uploadHistory.setIdTask( daoUtil.getInt( ++nPos ) );
+            }
+        }
 
         return uploadHistory;
     }
@@ -107,13 +109,14 @@ public class UploadHistoryDAO implements IUploadHistoryDAO
     @Override
     public void deleteByHistory( int nIdHistory, int nIdTask, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, plugin );
-        int nPos = 0;
-        daoUtil.setInt( ++nPos, nIdHistory );
-        daoUtil.setInt( ++nPos, nIdTask );
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, plugin ) )
+        {
+            int nPos = 0;
+            daoUtil.setInt( ++nPos, nIdHistory );
+            daoUtil.setInt( ++nPos, nIdTask );
 
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -122,10 +125,12 @@ public class UploadHistoryDAO implements IUploadHistoryDAO
     @Override
     public void deleteByTask( int nIdTask, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, plugin );
-        int nPos = 0;
-        daoUtil.setInt( ++nPos, nIdTask );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, plugin ) )
+        {
+            int nPos = 0;
+            daoUtil.setInt( ++nPos, nIdTask );
+            
+            daoUtil.executeUpdate( );
+        }
     }
 }

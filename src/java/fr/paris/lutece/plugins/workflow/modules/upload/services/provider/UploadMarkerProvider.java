@@ -37,8 +37,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.workflow.service.taskinfo.ITaskInfoProvider;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
@@ -46,8 +47,7 @@ import fr.paris.lutece.plugins.workflowcore.service.provider.IMarkerProvider;
 import fr.paris.lutece.plugins.workflowcore.service.provider.InfoMarker;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
-import javax.inject.Named;
+import jakarta.inject.Named;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -55,6 +55,8 @@ import net.sf.json.JSONObject;
  * This class represents a NotifyGru marker provider for the Edit record task
  *
  */
+@ApplicationScoped
+@Named( "workflow-upload.uploadMarkerProvider" )
 public class UploadMarkerProvider implements IMarkerProvider
 {
     private static final String ID = "workflow-upload.taskUploadMarkerProvider";
@@ -75,9 +77,8 @@ public class UploadMarkerProvider implements IMarkerProvider
     private ITaskService _taskService;
 
     @Inject
-    @Named(value="workflow-upload.uploadTaskInfoProvider")
+    @Named( value="workflow-upload.uploadTaskInfoProvider" )
     private ITaskInfoProvider _uploadTaskInfoProvider ;
-    //private ITaskInfoProvider _uploadTaskInfoProvider = SpringContextService.getBean( "workflow-upload.uploadMarkerProvider" );
 
     
     /**
