@@ -36,10 +36,7 @@ package fr.paris.lutece.plugins.workflow.modules.upload.services;
 import fr.paris.lutece.plugins.workflow.modules.upload.business.history.UploadHistory;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.plugin.Plugin;
-
-import org.apache.commons.fileupload.FileItem;
-
-import org.springframework.transaction.annotation.Transactional;
+import fr.paris.lutece.portal.service.upload.MultipartItem;
 
 import java.util.List;
 
@@ -64,8 +61,7 @@ public interface IUploadHistoryService
      * @param plugin
      *            the plugin
      */
-    @Transactional( "workflow.transactionManager" )
-    void create( int nIdResourceHistory, int nidTask, List<FileItem> listFiles, Plugin plugin );
+    void create( int nIdResourceHistory, int nidTask, List<MultipartItem> listFiles, Plugin plugin );
 
     /**
      * Removes the by history.
@@ -77,7 +73,6 @@ public interface IUploadHistoryService
      * @param plugin
      *            the plugin
      */
-    @Transactional( "workflow.transactionManager" )
     void removeByHistory( int nIdHistory, int nIdTask, Plugin plugin );
 
     /**
@@ -88,7 +83,6 @@ public interface IUploadHistoryService
      * @param plugin
      *            the plugin
      */
-    @Transactional( "workflow.transactionManager" )
     void removeByTask( int nIdTask, Plugin plugin );
 
     /**

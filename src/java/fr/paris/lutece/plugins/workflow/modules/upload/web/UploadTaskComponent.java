@@ -33,17 +33,20 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.upload.web;
 
+import fr.paris.lutece.api.user.User;
+import fr.paris.lutece.plugins.workflow.modules.upload.business.file.IUploadFileDAO;
 import fr.paris.lutece.plugins.workflow.modules.upload.business.file.UploadFile;
 import fr.paris.lutece.plugins.workflow.modules.upload.business.history.UploadHistory;
 import fr.paris.lutece.plugins.workflow.modules.upload.business.task.TaskUploadConfig;
-import fr.paris.lutece.plugins.workflow.modules.upload.factory.FactoryDOA;
-import fr.paris.lutece.plugins.workflow.modules.upload.factory.FactoryService;
+import fr.paris.lutece.plugins.workflow.modules.upload.services.IUploadHistoryService;
 import fr.paris.lutece.plugins.workflow.modules.upload.services.TaskUploadAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.workflow.modules.upload.services.UploadResourceIdService;
 import fr.paris.lutece.plugins.workflow.modules.upload.services.download.DownloadFileService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflow.web.task.AbstractTaskComponent;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
+import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
+import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
@@ -51,11 +54,11 @@ import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.service.util.AppPathService;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.util.html.HtmlTemplate;
-import fr.paris.lutece.util.xml.XmlUtil;
 
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
@@ -64,18 +67,20 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  *
  * UploadTaskComponent
  *
  */
+@ApplicationScoped
+@Named( "workflow-upload.uploadTaskComponent" )
 public class UploadTaskComponent extends AbstractTaskComponent
 {
-    // XML
-    private static final String TAG_UPLOAD = "upload";
-
     // TEMPLATES
     private static final String TEMPLATE_TASK_UPLOAD_CONFIG = "admin/plugins/workflow/modules/upload/task_upload_config.html";
     private static final String TEMPLATE_TASK_UPLOAD_FORM = "admin/plugins/workflow/modules/upload/task_upload_form.html";
@@ -104,6 +109,27 @@ public class UploadTaskComponent extends AbstractTaskComponent
     private static final String MESSAGE_MANDATORY_FIELD = "module.workflow.upload.task_upload_config.message.mandatory.field";
     private static final String MESSAGE_NO_CONFIGURATION_FOR_TASK_UPLOAD = "module.workflow.upload.task_upload_config.message.no_configuration_for_task_upload";
 
+    @Inject
+    private IUploadHistoryService _uploadHistoryService;
+    
+    @Inject
+    private IUploadFileDAO _uploadFileDAO;
+    
+    @Inject
+    @Named( TaskUploadAsynchronousUploadHandler.BEAN_TASK_ASYNCHRONOUS_UPLOAD_HANDLER )
+    private TaskUploadAsynchronousUploadHandler _taskUploadAsynchronousUploadHandler;
+    
+    @Inject
+    public UploadTaskComponent( @Named( "workflow-upload.taskTypeUpload" ) ITaskType taskType, 
+    		                    @Named( "workflow-upload.taskUploadConfigService" ) ITaskConfigService taskConfigService )
+    {
+        setTaskType( taskType );
+        setTaskConfigService( taskConfigService );
+    }
+    
+    @Inject
+    private Models model;
+    
     @Override
     public String validateConfig( ITaskConfig config, HttpServletRequest request )
     {
@@ -169,7 +195,7 @@ public class UploadTaskComponent extends AbstractTaskComponent
             return AdminMessageService.getMessageUrl( request, MESSAGE_NO_CONFIGURATION_FOR_TASK_UPLOAD, AdminMessage.TYPE_STOP );
         }
 
-        List<FileItem> listFiles = TaskUploadAsynchronousUploadHandler.getHandler( ).getListUploadedFiles( strUploadValue, request.getSession( ) );
+        List<MultipartItem> listFiles = _taskUploadAsynchronousUploadHandler.getListUploadedFiles( strUploadValue, request.getSession( ) );
 
         if ( config.isMandatory( ) && listFiles.isEmpty( ) )
         {
@@ -189,8 +215,6 @@ public class UploadTaskComponent extends AbstractTaskComponent
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
-
         TaskUploadConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         model.put( MARK_CONFIG, config );
 
@@ -205,15 +229,14 @@ public class UploadTaskComponent extends AbstractTaskComponent
     @Override
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
         TaskUploadConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         String strUpload = PARAMETER_UPLOAD_VALUE + "_" + task.getId( );
         model.put( MARK_CONFIG, config );
-        model.put( MARK_HANDLER, TaskUploadAsynchronousUploadHandler.getHandler( ) );
+        model.put( MARK_HANDLER, _taskUploadAsynchronousUploadHandler );
         model.put( MARK_FILE_NAME, strUpload );
 
-        TaskUploadAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ).getId( ) );
-        model.put( MARK_LIST_UPLOADED_FILE, new ArrayList<FileItem>( ) );
+        _taskUploadAsynchronousUploadHandler.removeSessionFiles( request.getSession( ).getId( ) );
+        model.put( MARK_LIST_UPLOADED_FILE, new ArrayList<MultipartItem>( ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_UPLOAD_FORM, locale, model );
 
@@ -226,13 +249,12 @@ public class UploadTaskComponent extends AbstractTaskComponent
     @Override
     public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
-        UploadHistory uploadValue = FactoryService.getHistoryService( ).findByPrimaryKey( nIdHistory, task.getId( ), WorkflowUtils.getPlugin( ) );
+        UploadHistory uploadValue = _uploadHistoryService.findByPrimaryKey( nIdHistory, task.getId( ), WorkflowUtils.getPlugin( ) );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
         TaskUploadConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         AdminUser userConnected = AdminUserService.getAdminUser( request );
 
-        List<UploadFile> listFile = FactoryDOA.getUploadFileDAO( ).load( nIdHistory, WorkflowUtils.getPlugin( ) );
+        List<UploadFile> listFile = _uploadFileDAO.load( nIdHistory, WorkflowUtils.getPlugin( ) );
 
         @SuppressWarnings( "deprecation" )
         String strBaseUrl = ( request != null ) ? AppPathService.getBaseUrl( request ) : AppPathService.getBaseUrl( );
@@ -250,8 +272,8 @@ public class UploadTaskComponent extends AbstractTaskComponent
         model.put( MARK_TASK, task );
         model.put( MARK_CONFIG, config );
         model.put( MARK_LIST_FILE, listFile );
-        model.put( MARK_HAS_PERMISSION_DELETE, RBACService.isAuthorized( uploadValue, UploadResourceIdService.PERMISSION_DELETE, userConnected ) );
-        model.put( MARK_IS_OWNER, FactoryService.getHistoryService( ).isOwner( nIdHistory, userConnected ) );
+        model.put( MARK_HAS_PERMISSION_DELETE, RBACService.isAuthorized( uploadValue, UploadResourceIdService.PERMISSION_DELETE, (User)  userConnected ) );
+        model.put( MARK_IS_OWNER, _uploadHistoryService.isOwner( nIdHistory, userConnected ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_UPLOAD_INFORMATION, locale, model );
 

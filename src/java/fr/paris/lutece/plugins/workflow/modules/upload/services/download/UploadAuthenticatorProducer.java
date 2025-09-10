@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2016, Mairie de Paris
+ * Copyright (c) 2002-2025, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,41 +31,22 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.upload.factory;
+package fr.paris.lutece.plugins.workflow.modules.upload.services.download;
 
-import fr.paris.lutece.plugins.workflow.modules.upload.business.file.IUploadFileDAO;
-import fr.paris.lutece.plugins.workflow.modules.upload.business.history.IUploadHistoryDAO;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.util.signrequest.AbstractPrivateKeyAuthenticator;
+import fr.paris.lutece.util.signrequest.cdi.AbstractSignRequestAuthenticatorProducer;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Named;
 
-/**
- * The Class FactoryDOA.
- */
-public final class FactoryDOA
+@ApplicationScoped
+public class UploadAuthenticatorProducer extends AbstractSignRequestAuthenticatorProducer
 {
-    /**
-     * Instantiates a new factory doa.
-     */
-    private FactoryDOA( )
+	@Produces
+    @ApplicationScoped
+    @Named( "workflow-upload.requestAuthentication" )
+    public AbstractPrivateKeyAuthenticator produceUploadRequestAuthenticator( )
     {
-    }
-
-    /**
-     * Gets the upload file dao.
-     *
-     * @return the upload file dao
-     */
-    public static IUploadFileDAO getUploadFileDAO( )
-    {
-        return SpringContextService.getBean( IUploadFileDAO.BEAN_SERVICE );
-    }
-
-    /**
-     * Gets the upload history dao.
-     *
-     * @return the upload history dao
-     */
-    public static IUploadHistoryDAO getUploadHistoryDAO( )
-    {
-        return SpringContextService.getBean( IUploadHistoryDAO.BEAN_SERVICE );
+		return (AbstractPrivateKeyAuthenticator) produceRequestAuthenticator( "workflow-upload.requestAuthentication" );
     }
 }

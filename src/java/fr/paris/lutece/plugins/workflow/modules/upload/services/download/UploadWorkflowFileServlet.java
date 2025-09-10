@@ -44,10 +44,10 @@ import org.apache.commons.lang.StringUtils;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Servlet serving ticketing files
@@ -87,16 +87,18 @@ public class UploadWorkflowFileServlet extends HttpServlet
 
             if ( !isRequestAuthenticated( request ) )
             {
-                AppLogService.error( LOG_UNAUTHENTICATED_REQUEST );
-                throw new ServletException( LOG_UNAUTHENTICATED_REQUEST );
+            	String errorMessage = LOG_UNAUTHENTICATED_REQUEST;
+                AppLogService.error( errorMessage );
+                throw new ServletException( errorMessage );
             }
 
             File file = FileHome.findByPrimaryKey( nIdFile );
 
             if ( file == null )
             {
-                AppLogService.error( LOG_UNKNOWN_ID_RESPONSE + strIdFile );
-                throw new ServletException( LOG_UNKNOWN_ID_RESPONSE + strIdFile );
+            	String errorMessage = LOG_UNKNOWN_ID_RESPONSE + strIdFile;
+                AppLogService.error( errorMessage );
+                throw new ServletException( errorMessage );
             }
 
             PhysicalFile physicalFile = PhysicalFileHome.findByPrimaryKey( file.getPhysicalFile( ).getIdPhysicalFile( ) );
@@ -124,8 +126,9 @@ public class UploadWorkflowFileServlet extends HttpServlet
         }
         else
         {
-            AppLogService.error( LOG_WRONG_ID_RESPONSE + strIdFile );
-            throw new ServletException( );
+        	String errorMessage = LOG_WRONG_ID_RESPONSE + strIdFile;
+            AppLogService.error( errorMessage );
+            throw new ServletException( errorMessage );
         }
     }
 

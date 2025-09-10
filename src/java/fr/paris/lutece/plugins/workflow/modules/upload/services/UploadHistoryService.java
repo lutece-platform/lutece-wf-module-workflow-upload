@@ -33,10 +33,10 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.upload.services;
 
+import fr.paris.lutece.plugins.workflow.modules.upload.business.file.IUploadFileDAO;
 import fr.paris.lutece.plugins.workflow.modules.upload.business.file.UploadFile;
 import fr.paris.lutece.plugins.workflow.modules.upload.business.history.IUploadHistoryDAO;
 import fr.paris.lutece.plugins.workflow.modules.upload.business.history.UploadHistory;
-import fr.paris.lutece.plugins.workflow.modules.upload.factory.FactoryDOA;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
@@ -46,53 +46,40 @@ import fr.paris.lutece.portal.business.physicalfile.PhysicalFile;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.util.filesystem.FileSystemUtil;
-
-import org.apache.commons.fileupload.FileItem;
-
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class UploadHistoryService.
  */
+@ApplicationScoped
 public class UploadHistoryService implements IUploadHistoryService
 {
-    /** The _dao. */
-    private IUploadHistoryDAO _dao;
+    /** The _uplodaHistoryDao. */
+	@Inject
+    private IUploadHistoryDAO _uploadHistoryDao;
+	
+	/** The _uplodaFileDao. */
+	@Inject
+    private IUploadFileDAO _uploadFileDao;
 
     /** The _resource history service. */
     @Inject
     private IResourceHistoryService _resourceHistoryService;
 
     /**
-     * Gets the upload history dao.
-     *
-     * @return the upload history dao
-     */
-    private IUploadHistoryDAO getUploadHistoryDAO( )
-    {
-        if ( _dao == null )
-        {
-            _dao = SpringContextService.getBean( IUploadHistoryDAO.BEAN_SERVICE );
-        }
-
-        return _dao;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
-    @Transactional( "workflow.transactionManager" )
-    public void create( int nIdResourceHistory, int nidTask, List<FileItem> listFiles, Plugin plugin )
+    public void create( int nIdResourceHistory, int nidTask, List<MultipartItem> listFiles, Plugin plugin )
     {
-        for ( FileItem fileitem : listFiles )
+        for ( MultipartItem fileitem : listFiles )
         {
             File file = buildFileWithPhysicalFile( fileitem );
             int nidFile = FileHome.create( file );
@@ -101,34 +88,32 @@ public class UploadHistoryService implements IUploadHistoryService
             uploadFile.setIdFile( nidFile );
             uploadFile.setIdHistory( nIdResourceHistory );
 
-            FactoryDOA.getUploadFileDAO( ).insert( uploadFile, WorkflowUtils.getPlugin( ) );
+            _uploadFileDao.insert( uploadFile, WorkflowUtils.getPlugin( ) );
         }
 
         UploadHistory uploadValue = new UploadHistory( );
         uploadValue.setIdResourceHistory( nIdResourceHistory );
         uploadValue.setIdTask( nidTask );
 
-        getUploadHistoryDAO( ).insert( uploadValue, plugin );
+        _uploadHistoryDao.insert( uploadValue, plugin );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @Transactional( "workflow.transactionManager" )
     public void removeByHistory( int nIdHistory, int nIdTask, Plugin plugin )
     {
-        getUploadHistoryDAO( ).deleteByHistory( nIdHistory, nIdTask, plugin );
+    	_uploadHistoryDao.deleteByHistory( nIdHistory, nIdTask, plugin );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @Transactional( "workflow.transactionManager" )
     public void removeByTask( int nIdTask, Plugin plugin )
     {
-        getUploadHistoryDAO( ).deleteByTask( nIdTask, plugin );
+    	_uploadHistoryDao.deleteByTask( nIdTask, plugin );
     }
 
     /**
@@ -137,7 +122,7 @@ public class UploadHistoryService implements IUploadHistoryService
     @Override
     public UploadHistory findByPrimaryKey( int nIdHistory, int nIdTask, Plugin plugin )
     {
-        return getUploadHistoryDAO( ).load( nIdHistory, nIdTask, plugin );
+        return _uploadHistoryDao.load( nIdHistory, nIdTask, plugin );
     }
 
     /**
@@ -159,7 +144,7 @@ public class UploadHistoryService implements IUploadHistoryService
      *            the file item
      * @return the file
      */
-    private File buildFileWithPhysicalFile( FileItem fileItem )
+    private File buildFileWithPhysicalFile( MultipartItem fileItem )
     {
         File file = new File( );
         file.setTitle( fileItem.getName( ) );

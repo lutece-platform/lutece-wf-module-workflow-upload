@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.upload.services.download;
 
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.CdiHelper;
 import fr.paris.lutece.util.signrequest.AbstractPrivateKeyAuthenticator;
 
 /**
@@ -59,6 +59,6 @@ public final class RequestAuthenticationService
      */
     public static AbstractPrivateKeyAuthenticator getRequestAuthenticator( )
     {
-        return (AbstractPrivateKeyAuthenticator) SpringContextService.getBean( BEAN_REQUEST_AUTHENTICATION );
+        return CdiHelper.getReference( AbstractPrivateKeyAuthenticator.class, BEAN_REQUEST_AUTHENTICATION );
     }
 }

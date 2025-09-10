@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.workflow.modules.upload.business.file;
 import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,7 @@ import java.util.List;
 /**
  * The Class UploadFileDAO.
  */
+@ApplicationScoped
 public class UploadFileDAO implements IUploadFileDAO
 {
     /** The Constant SQL_QUERY_FIND_BY_HISTORY. */
@@ -66,15 +68,15 @@ public class UploadFileDAO implements IUploadFileDAO
     @Override
     public synchronized void insert( UploadFile upload, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin ) )
+        {
+            int nPos = 0;
 
-        int nPos = 0;
+            daoUtil.setInt( ++nPos, upload.getIdFile( ) );
+            daoUtil.setInt( ++nPos, upload.getIdHistory( ) );
 
-        daoUtil.setInt( ++nPos, upload.getIdFile( ) );
-        daoUtil.setInt( ++nPos, upload.getIdHistory( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -83,32 +85,31 @@ public class UploadFileDAO implements IUploadFileDAO
     @Override
     public List<UploadFile> load( int nIdHistory, Plugin plugin )
     {
-        UploadFile uploadUpload = null;
-
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_HISTORY, plugin );
-        int nPos = 0;
-        daoUtil.setInt( ++nPos, nIdHistory );
-
-        List<UploadFile> fileList = new ArrayList<UploadFile>( );
-
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+    	UploadFile uploadUpload = null;
+    	List<UploadFile> fileList = new ArrayList<UploadFile>( );
+    	
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_HISTORY, plugin ) )
         {
-            nPos = 0;
-            uploadUpload = new UploadFile( );
-            uploadUpload.setIdUploadFile( daoUtil.getInt( ++nPos ) );
-            uploadUpload.setIdFile( daoUtil.getInt( ++nPos ) );
-            uploadUpload.setIdHistory( daoUtil.getInt( ++nPos ) );
-            uploadUpload.setFile( FileHome.findByPrimaryKey( uploadUpload.getIdFile( ) ) );
+        	int nPos = 0;
+            daoUtil.setInt( ++nPos, nIdHistory );
+            
+            daoUtil.executeQuery( );
 
-            if ( uploadUpload.getFile( ) != null )
+            while ( daoUtil.next( ) )
             {
-                fileList.add( uploadUpload );
+                nPos = 0;
+                uploadUpload = new UploadFile( );
+                uploadUpload.setIdUploadFile( daoUtil.getInt( ++nPos ) );
+                uploadUpload.setIdFile( daoUtil.getInt( ++nPos ) );
+                uploadUpload.setIdHistory( daoUtil.getInt( ++nPos ) );
+                uploadUpload.setFile( FileHome.findByPrimaryKey( uploadUpload.getIdFile( ) ) );
+
+                if ( uploadUpload.getFile( ) != null )
+                {
+                    fileList.add( uploadUpload );
+                }
             }
         }
-
-        daoUtil.free( );
 
         return fileList;
     }
@@ -119,12 +120,13 @@ public class UploadFileDAO implements IUploadFileDAO
     @Override
     public void deleteByHistory( int nIdHistory, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, plugin );
-        int nPos = 0;
-        daoUtil.setInt( ++nPos, nIdHistory );
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, plugin ) )
+        {
+            int nPos = 0;
+            daoUtil.setInt( ++nPos, nIdHistory );
 
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -133,35 +135,38 @@ public class UploadFileDAO implements IUploadFileDAO
     @Override
     public void deleteByid( int nIdFileUpload, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_ID, plugin );
-        int nPos = 0;
-        daoUtil.setInt( ++nPos, nIdFileUpload );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+    	try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_ID, plugin ) )
+    	{
+            int nPos = 0;
+            daoUtil.setInt( ++nPos, nIdFileUpload );
+            
+            daoUtil.executeUpdate( );
+    	}
     }
 
     @Override
     public UploadFile findbyprimaryKey( int nIdFileUpload, Plugin plugin )
     {
         UploadFile uploadUpload = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin );
-        int nPos = 0;
-        daoUtil.setInt( ++nPos, nIdFileUpload );
-
-        daoUtil.executeQuery( );
-
-        nPos = 0;
-
-        if ( daoUtil.next( ) )
+        
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin ) )
         {
-            uploadUpload = new UploadFile( );
-            uploadUpload.setIdUploadFile( daoUtil.getInt( ++nPos ) );
-            uploadUpload.setIdFile( daoUtil.getInt( ++nPos ) );
-            uploadUpload.setIdHistory( daoUtil.getInt( ++nPos ) );
-            uploadUpload.setFile( FileHome.findByPrimaryKey( uploadUpload.getIdFile( ) ) );
-        }
+        	int nPos = 0;
+            daoUtil.setInt( ++nPos, nIdFileUpload );
 
-        daoUtil.free( );
+            daoUtil.executeQuery( );
+
+            nPos = 0;
+
+            if ( daoUtil.next( ) )
+            {
+                uploadUpload = new UploadFile( );
+                uploadUpload.setIdUploadFile( daoUtil.getInt( ++nPos ) );
+                uploadUpload.setIdFile( daoUtil.getInt( ++nPos ) );
+                uploadUpload.setIdHistory( daoUtil.getInt( ++nPos ) );
+                uploadUpload.setFile( FileHome.findByPrimaryKey( uploadUpload.getIdFile( ) ) );
+            }
+        }
 
         return uploadUpload;
     }
