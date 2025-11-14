@@ -95,7 +95,7 @@ public class UploadTaskInfoProvider extends AbstractTaskInfoProvider
         {
             for (UploadFile uploadFile : uploadFileList )
             {
-                String strDownloadUrl = DownloadFileService.getUrlDownloadFile( uploadFile.getIdFile( ), AppPathService.getBaseUrl( request ) ) ;
+                String strDownloadUrl = DownloadFileService.getUrlDownloadFile( uploadFile.getIdFile( ), AppPathService.getProdUrl( request ) ) ;
                 JSONObject fileItem = new JSONObject( );
                 fileItem.accumulate( KEY_FILE_NAME, uploadFile.getFile( ).getTitle( ) );
                 fileItem.accumulate( KEY_FILE_URL, strDownloadUrl );
