@@ -61,7 +61,7 @@ public class UploadHistoryDAO implements IUploadHistoryDAO
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( UploadHistory history, Plugin plugin )
+    public void insert( UploadHistory history, Plugin plugin )
     {
         try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin ) )
         {
