@@ -10,7 +10,7 @@
     <groupId>fr.paris.lutece.plugins</groupId>
     <artifactId>module-workflow-upload</artifactId>
     <packaging>lutece-plugin</packaging>
-    <version>1.1.5-SNAPSHOT</version>
+    <version>1.1.5</version>
     <name>Lutece module workflow upload</name>
 
     <repositories>
@@ -61,6 +61,6 @@
         <connection>scm:git:https://github.com/lutece-platform/lutece-wf-module-workflow-upload.git</connection>
         <developerConnection>scm:git:https://github.com/lutece-platform/lutece-wf-module-workflow-upload.git</developerConnection>
         <url>https://github.com/lutece-platform/lutece-wf-module-workflow-upload.git</url>
-        <tag>HEAD</tag>
+        <tag>module-workflow-upload-1.1.5</tag>
 	</scm>
 </project>
