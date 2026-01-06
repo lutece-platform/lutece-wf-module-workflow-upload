@@ -33,6 +33,9 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.upload.services.taskinfo;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.paris.lutece.plugins.workflow.modules.upload.business.file.UploadFile;
 import fr.paris.lutece.plugins.workflow.modules.upload.factory.FactoryDOA;
 import fr.paris.lutece.plugins.workflow.modules.upload.services.download.DownloadFileService;
@@ -43,8 +46,6 @@ import java.util.List;
 
 
 import javax.servlet.http.HttpServletRequest;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 /**
  *
@@ -72,26 +73,28 @@ public class UploadTaskInfoProvider extends AbstractTaskInfoProvider
     @Override
     public String getTaskResourceInfo( int nIdHistory, int nIdTask, HttpServletRequest request )
     {
-        JSONObject jsonInfos = new JSONObject( );
+
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode jsonInfos = mapper.createObjectNode();
+        ArrayNode jsonUrlList = mapper.createArrayNode();
 
         List<UploadFile> uploadFileList = FactoryDOA.getUploadFileDAO( ).load( nIdHistory, WorkflowUtils.getPlugin( ) );
 
-        JSONArray jsonUrlList = new JSONArray( );
         if ( uploadFileList != null )
         {
             for (UploadFile uploadFile : uploadFileList )
             {
                 String strDownloadUrl = DownloadFileService.getUrlDownloadFile( uploadFile.getIdFile( ), AppPathService.getProdUrl( request ) ) ;
-                JSONObject fileItem = new JSONObject( );
-                fileItem.accumulate(KEY_FILE_NAME, uploadFile.getFile( ).getTitle( ) );
-                fileItem.accumulate(KEY_FILE_URL, strDownloadUrl );
-                
-                jsonUrlList.add( fileItem );
+
+                ObjectNode fileItem = mapper.createObjectNode();
+                fileItem.put(KEY_FILE_NAME, uploadFile.getFile().getTitle());
+                fileItem.put(KEY_FILE_URL, strDownloadUrl);
+                jsonUrlList.add(fileItem);
             }
         }
-        
-        jsonInfos.accumulate( KEY_URL_LIST, jsonUrlList );
-        
-        return jsonInfos.toString( );
+
+        jsonInfos.set(KEY_URL_LIST, jsonUrlList);
+
+        return jsonInfos.toString();
     }
 }
