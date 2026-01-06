@@ -41,15 +41,18 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.paris.lutece.plugins.workflow.service.taskinfo.ITaskInfoProvider;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.provider.IMarkerProvider;
 import fr.paris.lutece.plugins.workflowcore.service.provider.InfoMarker;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
+import fr.paris.lutece.portal.service.util.AppLogService;
+
 import jakarta.inject.Named;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 /**
  * This class represents a NotifyGru marker provider for the Edit record task
@@ -129,15 +132,24 @@ public class UploadMarkerProvider implements IMarkerProvider
                 String strJsonInfos = _uploadTaskInfoProvider.getTaskResourceInfo( resourceHistory.getId( ), taskOther.getId( ), request ) ;
                 StringBuilder strMsg = new StringBuilder( "<ul class='uploadTaskList'>" );
                 
-                JSONObject jsonInfos = JSONObject.fromObject( strJsonInfos );
-                JSONArray jsonUrlList = jsonInfos.getJSONArray( MARK_UPLOAD_URLS );
-                if (jsonUrlList != null ) 
-                {
-                    for ( Object fileItem : jsonUrlList )
+                ObjectMapper mapper = new ObjectMapper();
+                try {
+                    JsonNode jsonUrlList = mapper.readTree(strJsonInfos).get(MARK_UPLOAD_URLS);
+
+                    if (jsonUrlList != null )
                     {
-                        JSONObject jsonFileItem = (JSONObject)fileItem ;
-                        strMsg.append( "<li><a href='").append( jsonFileItem.get( KEY_FILE_URL ) ).append( "'>" ).append( jsonFileItem.get( KEY_FILE_NAME ) ).append(  "</a></li>" );
+                        for ( JsonNode fileItem : jsonUrlList )
+                        {
+                            String fileUrl = fileItem.get(KEY_FILE_URL).asText();
+                            String fileName = fileItem.get(KEY_FILE_NAME).asText();
+
+                            strMsg.append("<li><a href='").append(fileUrl).append("'>").append(fileName).append("</a></li>");
+                        }
                     }
+                }
+                catch (JsonProcessingException e)
+                {
+                    AppLogService.error("JSON parsing failed", e);
                 }
                 strMsg.append( "</ul>" );
 
