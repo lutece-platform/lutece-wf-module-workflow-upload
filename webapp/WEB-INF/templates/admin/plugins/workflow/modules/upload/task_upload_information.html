@@ -1,14 +1,20 @@
-<#if config?exists  && list_file_uploaded?has_content >
-<script >
-   function removeUploadValue(idHistory, idTask,idFileUpload) 
-   {
-    var form = $('<form>', 
-       { 'action': 'jsp/admin/plugins/workflow/modules/upload/ConfirmRemoveUpload.jsp?' + 'id_history=' + idHistory + '&id_task=' + idTask+ '&id_file_upload=' + idFileUpload  + '&return_url=' + encodeURIComponent(window.location.href),
-         'method':'post'}
-       );
-       form.appendTo('body');
-       form.submit().remove();
-   }
+<#if config?exists && list_file_uploaded?has_content >
+<script>
+  function removeUploadValue(idHistory, idTask, idFileUpload) 
+  {
+    const form = document.createElement('form');
+    form.action = 'jsp/admin/plugins/workflow/modules/upload/ConfirmRemoveUpload.jsp?' +
+                  'id_history=' + idHistory +
+                  '&id_task=' + idTask +
+                  '&id_file_upload=' + idFileUpload +
+                  '&return_url=' + encodeURIComponent(window.location.href);
+    form.method = 'post';
+
+    document.body.appendChild(form);
+
+    form.submit();
+    document.body.removeChild(form);
+  }
 </script>
 <div>
   <div>
