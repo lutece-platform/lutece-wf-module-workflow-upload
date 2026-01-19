@@ -16,5 +16,10 @@
 <script type="text/javascript" src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=taskUploadAsynchronousUploadHandler" ></script>
 <script>
 /*HACK for firefox*/
-$("#listUpload  button[type='submit']").attr("onclick","return false;");
+document.addEventListener("DOMContentLoaded", function () {
+  const buttons = document.querySelectorAll("#listUpload button[type='submit']");
+  buttons.forEach(button => {
+    button.setAttribute("onclick", "return false;");
+  });
+});
 </script>
