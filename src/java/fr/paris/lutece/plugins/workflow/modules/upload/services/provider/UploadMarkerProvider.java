@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.workflow.modules.upload.services.provider;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -51,6 +52,7 @@ import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.web.l10n.LocaleService;
 
 import javax.inject.Named;
 
@@ -123,8 +125,13 @@ public class UploadMarkerProvider implements IMarkerProvider
     public Collection<InfoMarker> provideMarkerValues( ResourceHistory resourceHistory, ITask task, HttpServletRequest request )
     {
         List<InfoMarker> listMarkers = new ArrayList<>( );
+        Locale locale = LocaleService.getContextUserLocale( request );
+        if ( request != null )
+        {
+            locale = request.getLocale( );
+        }
         
-        for ( ITask taskOther : _taskService.getListTaskByIdAction( resourceHistory.getAction( ).getId( ), request.getLocale( ) ) )
+        for ( ITask taskOther : _taskService.getListTaskByIdAction( resourceHistory.getAction( ).getId( ), locale ) )
         {
             if ( taskOther.getTaskType( ).getKey( ).equals( _uploadTaskInfoProvider.getTaskType( ).getKey( ) ) )
             {
