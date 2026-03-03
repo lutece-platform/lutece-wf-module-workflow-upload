@@ -1,53 +1,19 @@
-<div class="row">
-   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border:2px solid #000000;">
-      <legend> #i18n{module.workflow.upload.task_upload_config.title}</legend>
-      <div class="form-group">
-         <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-2" for="maxFile">#i18n{module.workflow.upload.task_upload_config.label_title} * :</label>
-         <div class="input-group col-xs-12 col-sm-12 col-md-3 col-lg-3">     
-            <#if config?exists>
-            <input type="text" class="form-control" name="title" id="title" value="${config.title!}"  maxlength="255">
-            <#else>
-            <input type="text" class="form-control" name="title" id="title" value=""  maxlength="255">
-            </#if>
-            <span class="help-block">#i18n{module.workflow.upload.task_upload_config.label_title_upload}</span>
-         </div>
-      </div>
-      <div class="form-group">
-         <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-2" for="maxFile">#i18n{module.workflow.upload.task_upload_config.label_number} * :</label>
-         <div class="input-group col-xs-12 col-sm-12 col-md-3 col-lg-3">
-            <#if config?exists>
-            <input type="text" class="form-control" id="maxFile"  name="maxFile" id="maxFile" value="${config.maxFile!0}">
-            <#else>
-            <input type="text" class="form-control" id="maxFile"  name="maxFile" id="maxFile" value="0">
-            </#if>
-            <div class="input-group-addon">#i18n{module.workflow.upload.task_upload_config.label_number_upload_inline}</div>
-         </div>
-      </div>
-        <div class="form-group">
-         <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-2" for="maxSizeFile">#i18n{module.workflow.upload.task_upload_config.label_size} * :</label>
-         <div class="input-group col-xs-12 col-sm-12 col-md-3 col-lg-3">
-            <#if config?exists>
-            <input type="text" class="form-control" id="maxFile"  name="maxSizeFile" id="maxSizeFile" value="${config.maxSizeFile!0}">
-            <#else>
-            <input type="text" class="form-control" id="maxFile"  name="maxSizeFile" id="maxSizeFile" value="0">
-            </#if>
-            <div class="input-group-addon">#i18n{module.workflow.upload.task_upload_config.label_size_upload_inline}</div>
-         </div>
-      </div>
-       <div class="form-group">
-         <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-2" >#i18n{module.workflow.upload.task_upload_config.label_mandatory} * :</label>
-         <div class="input-group col-xs-12 col-sm-12 col-md-3 col-lg-3">
-          
-            <input name="mandatory" value="true" type="radio"  <#if config?exists && config.mandatory>checked="checked"</#if> />
-          #i18n{module.workflow.upload.task_upload_config.label_yes}
-            <input name="mandatory" value="false" type="radio" <#if config?exists && !config.mandatory>checked="checked"</#if> />
-           #i18n{module.workflow.upload.task_upload_config.label_no}
-           <br/>
- <br/>
-            <span class="help-block">#i18n{module.workflow.upload.task_upload_config.label_mandatory_upload}</span>
-         </div>
-      </div>
-   </div>
-</div>
-
-  
+<@row>
+    <@columns>
+        <@fieldSet legend='#i18n{module.workflow.upload.task_upload_config.title}'>
+            <@formGroup labelFor='title' labelKey='#i18n{module.workflow.upload.task_upload_config.label_title}' mandatory=true helpKey='#i18n{module.workflow.upload.task_upload_config.label_title_upload}'>
+                <@input type='text' name='title' id='title' value='${(config.title)!}' maxlength=255 />
+            </@formGroup>
+            <@formGroup labelFor='maxFile' labelKey='#i18n{module.workflow.upload.task_upload_config.label_number}' mandatory=true helpKey='#i18n{module.workflow.upload.task_upload_config.label_number_upload_inline}'>
+                <@input type='number' name='maxFile' id='maxFile' value='${(config.maxFile)!0}' />
+            </@formGroup>
+            <@formGroup labelFor='maxSizeFile' labelKey='#i18n{module.workflow.upload.task_upload_config.label_size}' mandatory=true helpKey='#i18n{module.workflow.upload.task_upload_config.label_size_upload_inline}'>
+                <@input type='number' name='maxSizeFile' id='maxSizeFile' value='${(config.maxSizeFile)!0}' />
+            </@formGroup>
+            <@formGroup labelKey='#i18n{module.workflow.upload.task_upload_config.label_mandatory}' mandatory=true helpKey='#i18n{module.workflow.upload.task_upload_config.label_mandatory_upload}'>
+                <@radioButton name='mandatory' value='true' labelKey='#i18n{module.workflow.upload.task_upload_config.label_yes}' orientation='inline' checked=(config?? && config.mandatory) />
+                <@radioButton name='mandatory' value='false' labelKey='#i18n{module.workflow.upload.task_upload_config.label_no}' orientation='inline' checked=(config?? && !config.mandatory) />
+            </@formGroup>
+        </@fieldSet>
+    </@columns>
+</@row>
