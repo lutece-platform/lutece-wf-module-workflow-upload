@@ -234,6 +234,43 @@ public class TaskUploadAsynchronousUploadHandler extends AbstractAsynchronousUpl
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeSessionFiles( HttpSession session )
+    {
+        String sessionId = (String) session.getAttribute( PARAM_CUSTOM_SESSION_ID );
+
+        if( StringUtils.isBlank( sessionId) )
+        {
+            return;
+        }
+
+        Map<String, List<FileItem>> mapFileItemsSession = _mapAsynchronousUpload.get( sessionId );
+
+        if ( mapFileItemsSession == null )
+        {
+            return;
+        }
+
+        try
+        {
+            for ( List<FileItem> fileItems : mapFileItemsSession.values( ) )
+            {
+                for ( FileItem fileItem : fileItems )
+                {
+                    fileItem.delete( );
+                }
+            }
+        }
+        finally
+        {
+            _mapAsynchronousUpload.remove( sessionId );
+        }
+
+    }
+
+    /**
      * Build the field name from a given id entry i.e. : form_1
      * 
      * @param strIdEntry
