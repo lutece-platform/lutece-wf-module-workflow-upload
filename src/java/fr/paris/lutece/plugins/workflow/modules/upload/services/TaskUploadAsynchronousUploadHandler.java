@@ -306,4 +306,43 @@ public class TaskUploadAsynchronousUploadHandler extends AbstractAsynchronousUpl
     {
         return HANDLER_NAME;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeSessionFiles( HttpSession session )
+    {
+        String sessionId = (String) session.getAttribute( PARAM_CUSTOM_SESSION_ID );
+
+        if( StringUtils.isBlank( sessionId) )
+        {
+            return;
+        }
+
+        Map<String, List<MultipartItem>> mapFileItemsSession = _mapAsynchronousUpload.remove( sessionId );
+
+        if ( mapFileItemsSession != null )
+        {
+            for ( List<MultipartItem> fileItems : mapFileItemsSession.values( ) )
+            {
+                deleteFiles( fileItems );
+            }
+        }
+    }
+
+    private void deleteFiles( List<MultipartItem> fileItems )
+    {
+        for ( MultipartItem fileItem : fileItems )
+        {
+            try
+            {
+                fileItem.delete( );
+            }
+            catch ( IOException e )
+            {
+                AppLogService.error( "Unable to delete uploaded file " + fileItem.getName( ), e );
+            }
+        }
+    }
 }
