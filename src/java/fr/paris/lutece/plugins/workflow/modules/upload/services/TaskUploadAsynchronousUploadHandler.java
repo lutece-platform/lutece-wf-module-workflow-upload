@@ -313,21 +313,24 @@ public class TaskUploadAsynchronousUploadHandler extends AbstractAsynchronousUpl
     @Override
     public void removeSessionFiles( HttpSession session )
     {
-        String sessionId = (String) session.getAttribute( PARAM_CUSTOM_SESSION_ID );
+        String sessionId = session.getId( );
+        Map<String, List<MultipartItem>> mapFileItemsSession = _mapAsynchronousUpload.get( sessionId );
 
-        if( StringUtils.isBlank( sessionId) )
+        if ( mapFileItemsSession == null )
         {
             return;
         }
 
-        Map<String, List<MultipartItem>> mapFileItemsSession = _mapAsynchronousUpload.remove( sessionId );
-
-        if ( mapFileItemsSession != null )
+        try
         {
             for ( List<MultipartItem> fileItems : mapFileItemsSession.values( ) )
             {
                 deleteFiles( fileItems );
             }
+        }
+        finally
+        {
+            _mapAsynchronousUpload.remove( sessionId );
         }
     }
 
