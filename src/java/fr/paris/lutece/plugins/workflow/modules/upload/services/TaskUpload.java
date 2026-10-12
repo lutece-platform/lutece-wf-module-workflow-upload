@@ -100,7 +100,7 @@ public class TaskUpload extends Task
         	_uploadHistoryService.create( nIdResourceHistory, this.getId( ), listFiles, WorkflowUtils.getPlugin( ) );
         }
 
-        _taskUploadAsynchronousUploadHandler.removeSessionFiles( request.getSession( ).getId( ) );
+        _taskUploadAsynchronousUploadHandler.clearSessionFiles( request.getSession( ) );
     }
 
     /**

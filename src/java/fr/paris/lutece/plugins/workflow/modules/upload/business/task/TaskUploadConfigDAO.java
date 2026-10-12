@@ -57,7 +57,7 @@ public class TaskUploadConfigDAO implements ITaskConfigDAO<TaskUploadConfig>
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( TaskUploadConfig config )
+    public void insert( TaskUploadConfig config )
     {
         try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) ) )
         {

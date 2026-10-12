@@ -235,7 +235,7 @@ public class UploadTaskComponent extends AbstractTaskComponent
         model.put( MARK_HANDLER, _taskUploadAsynchronousUploadHandler );
         model.put( MARK_FILE_NAME, strUpload );
 
-        _taskUploadAsynchronousUploadHandler.removeSessionFiles( request.getSession( ).getId( ) );
+        _taskUploadAsynchronousUploadHandler.clearSessionFiles( request.getSession( ) );
         model.put( MARK_LIST_UPLOADED_FILE, new ArrayList<MultipartItem>( ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_UPLOAD_FORM, locale, model );
