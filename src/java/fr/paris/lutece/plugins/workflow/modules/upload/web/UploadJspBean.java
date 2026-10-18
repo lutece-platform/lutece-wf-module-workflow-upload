@@ -52,8 +52,10 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
+import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
-import fr.paris.lutece.util.url.UrlItem;
+import fr.paris.lutece.util.http.SecurityUtil;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -62,8 +64,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -102,6 +106,7 @@ public class UploadJspBean extends MVCAdminJspBean
     /** The Constant PARAMETER_ENCODING. */
     // Other constants
     private static final String PARAMETER_ENCODING = "UTF-8";
+    private static final String METHOD_POST = "POST";
 
     // Services
     @Inject
@@ -140,15 +145,17 @@ public class UploadJspBean extends MVCAdminJspBean
         String strIdFileUpload = request.getParameter( PARAMETER_ID_FILE_UPLOAD );
         String strIdHistory = request.getParameter( PARAMETER_ID_HISTORY );
         String strIdTask = request.getParameter( PARAMETER_ID_TASK );
-        String strReturnUrl = request.getParameter( PARAMETER_RETURN_URL );
+        String strReturnUrl = getSafeReturnUrl( request, request.getParameter( PARAMETER_RETURN_URL ) );
 
-        UrlItem url = new UrlItem( JSP_DO_REMOVE_UPLOAD );
-        url.addParameter( PARAMETER_ID_HISTORY, strIdHistory );
-        url.addParameter( PARAMETER_ID_FILE_UPLOAD, strIdFileUpload );
-        url.addParameter( PARAMETER_ID_TASK, strIdTask );
-        url.addParameter( PARAMETER_RETURN_URL, URLEncoder.encode( strReturnUrl, PARAMETER_ENCODING ) );
+        Map<String, Object> parameters = new HashMap<>( );
+        parameters.put( PARAMETER_ID_HISTORY, strIdHistory );
+        parameters.put( PARAMETER_ID_FILE_UPLOAD, strIdFileUpload );
+        parameters.put( PARAMETER_ID_TASK, strIdTask );
+        parameters.put( PARAMETER_RETURN_URL, URLEncoder.encode( strReturnUrl, PARAMETER_ENCODING ) );
+        parameters.put( SecurityTokenService.PARAMETER_TOKEN, getSecurityTokenService( ).getToken( request, JSP_DO_REMOVE_UPLOAD ) );
 
-        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_UPLOAD, null, null, url.getUrl( ), null, AdminMessage.TYPE_CONFIRMATION, null, strReturnUrl );
+        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_UPLOAD, null, null, JSP_DO_REMOVE_UPLOAD, null, AdminMessage.TYPE_CONFIRMATION,
+                parameters, strReturnUrl );
     }
 
     /**
@@ -158,12 +165,17 @@ public class UploadJspBean extends MVCAdminJspBean
      *            the request
      * @return the string
      * @throws AccessDeniedException
-     *             the access denied exception
+     *             if the request is not posted with a valid security token or if the user is not allowed to delete the upload
      * @throws UnsupportedEncodingException
      *             the unsupported encoding exception
      */
     public String doRemoveUpload( HttpServletRequest request ) throws AccessDeniedException, UnsupportedEncodingException
     {
+        if ( !METHOD_POST.equalsIgnoreCase( request.getMethod( ) ) || !getSecurityTokenService( ).validate( request, JSP_DO_REMOVE_UPLOAD ) )
+        {
+            throw new AccessDeniedException( ERROR_INVALID_TOKEN );
+        }
+
         if ( !canDeleteUpload( request ) )
         {
             throw new AccessDeniedException( "The connected user is not allowed to delete this upload" );
@@ -219,7 +231,28 @@ public class UploadJspBean extends MVCAdminJspBean
             _resourceHistoryService.remove( nIdHistory );
         }
 
-        return URLDecoder.decode( request.getParameter( PARAMETER_RETURN_URL ), PARAMETER_ENCODING );
+        String strReturnUrl = request.getParameter( PARAMETER_RETURN_URL );
+
+        return getSafeReturnUrl( request, ( strReturnUrl != null ) ? URLDecoder.decode( strReturnUrl, PARAMETER_ENCODING ) : null );
+    }
+
+    /**
+     * Gets the return URL if it stays in the application, the admin home page otherwise (no open redirect)
+     *
+     * @param request
+     *            the request
+     * @param strReturnUrl
+     *            the return URL given in the request
+     * @return the return URL, or the admin home page if it is blank or leaves the application
+     */
+    String getSafeReturnUrl( HttpServletRequest request, String strReturnUrl )
+    {
+        if ( StringUtils.isBlank( strReturnUrl ) || !SecurityUtil.isInternalRedirectUrlSafe( strReturnUrl, request ) )
+        {
+            return AppPathService.getBaseUrl( request ) + AppPathService.getAdminMenuUrl( );
+        }
+
+        return strReturnUrl;
     }
 
     /**
@@ -227,7 +260,7 @@ public class UploadJspBean extends MVCAdminJspBean
      *
      * @param request
      *            the request
-     * @return true, if successful
+     * @return true if the file belongs to the history and the user can delete the upload of this history
      */
     private boolean canDeleteUpload( HttpServletRequest request )
     {
@@ -236,6 +269,15 @@ public class UploadJspBean extends MVCAdminJspBean
         String strIdTask = request.getParameter( PARAMETER_ID_TASK );
         int nIdTask = WorkflowUtils.convertStringToInt( strIdTask );
         AdminUser userConnected = AdminUserService.getAdminUser( request );
+
+        // The file must belong to the history whose rights are checked
+        UploadFile uploadFile = _uploadFileDAO.findbyprimaryKey( WorkflowUtils.convertStringToInt( request.getParameter( PARAMETER_ID_FILE_UPLOAD ) ),
+                WorkflowUtils.getPlugin( ) );
+
+        if ( ( uploadFile == null ) || ( uploadFile.getIdHistory( ) != nIdHistory ) )
+        {
+            return false;
+        }
 
         UploadHistory uploadValue = _uploadHistoryService.findByPrimaryKey( nIdHistory, nIdTask, WorkflowUtils.getPlugin( ) );
 
