@@ -17,7 +17,12 @@
                 <p></p>
             </subsection>
             <subsection name="Usage">
-                <p></p>
+                <p>
+                    The marker <code>url_list</code> (provider "Uploads") gives the download links of the files uploaded by
+                    the upload task of the action, as an HTML list. Notification messages escape their markers: write it
+                    <code>${richText(url_list!)}</code> in an HTML message, so that the list keeps its links (the file names
+                    stay text).
+                </p>
             </subsection>
         </section>
     </body>

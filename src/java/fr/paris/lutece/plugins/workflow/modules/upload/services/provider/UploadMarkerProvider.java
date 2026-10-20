@@ -41,6 +41,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -130,31 +132,9 @@ public class UploadMarkerProvider implements IMarkerProvider
             if ( taskOther.getTaskType( ).getKey( ).equals( _uploadTaskInfoProvider.getTaskType( ).getKey( ) ) )
             {
                 String strJsonInfos = _uploadTaskInfoProvider.getTaskResourceInfo( resourceHistory.getId( ), taskOther.getId( ), request ) ;
-                StringBuilder strMsg = new StringBuilder( "<ul class='uploadTaskList'>" );
-                
-                ObjectMapper mapper = new ObjectMapper();
-                try {
-                    JsonNode jsonUrlList = mapper.readTree(strJsonInfos).get(MARK_UPLOAD_URLS);
-
-                    if (jsonUrlList != null )
-                    {
-                        for ( JsonNode fileItem : jsonUrlList )
-                        {
-                            String fileUrl = fileItem.get(KEY_FILE_URL).asText();
-                            String fileName = fileItem.get(KEY_FILE_NAME).asText();
-
-                            strMsg.append("<li><a href='").append(fileUrl).append("'>").append(fileName).append("</a></li>");
-                        }
-                    }
-                }
-                catch (JsonProcessingException e)
-                {
-                    AppLogService.error("JSON parsing failed", e);
-                }
-                strMsg.append( "</ul>" );
 
                 InfoMarker notifyMarkerMsg = new InfoMarker( MARK_UPLOAD_URLS );
-                notifyMarkerMsg.setValue( strMsg.toString( ) );
+                notifyMarkerMsg.setValue( buildUrlListHtml( strJsonInfos ) );
                 listMarkers.add( notifyMarkerMsg );
 
                 break;
@@ -162,6 +142,46 @@ public class UploadMarkerProvider implements IMarkerProvider
         }
 
         return listMarkers;
+    }
+
+    /**
+     * Builds the HTML list of the download links of the uploaded files, from the JSON of the upload task information. The
+     * file names and the URLs are HTML-escaped: a file name is the title given by the user who uploaded it. The marker
+     * value is a String (InfoMarker), so a notification that renders its markers with auto-escaping shows this list as
+     * text: its message writes the marker as rich text, <code>${richText( url_list! )}</code>, which sanitizes the list
+     * and keeps its links.
+     *
+     * @param strJsonInfos
+     *            the JSON of the upload task information: <code>{ "url_list": [ { "file_name": …, "file_url": … } ] }</code>
+     * @return the HTML list, empty (<code>&lt;ul&gt;&lt;/ul&gt;</code>) when the JSON holds no file or cannot be read
+     */
+    static String buildUrlListHtml( String strJsonInfos )
+    {
+        StringBuilder sbHtml = new StringBuilder( "<ul class=\"uploadTaskList\">" );
+
+        try
+        {
+            JsonNode jsonUrlList = ( strJsonInfos != null ) ? new ObjectMapper( ).readTree( strJsonInfos ).get( MARK_UPLOAD_URLS ) : null;
+
+            if ( jsonUrlList != null )
+            {
+                for ( JsonNode fileItem : jsonUrlList )
+                {
+                    String strFileUrl = fileItem.path( KEY_FILE_URL ).asText( );
+                    String strFileName = fileItem.path( KEY_FILE_NAME ).asText( );
+
+                    sbHtml.append( "<li><a href=\"" ).append( StringEscapeUtils.escapeHtml4( strFileUrl ) ).append( "\">" )
+                            .append( StringEscapeUtils.escapeHtml4( strFileName ) ).append( "</a></li>" );
+                }
+            }
+        }
+        catch( JsonProcessingException e )
+        {
+            AppLogService.error( "JSON parsing failed", e );
+        }
+        sbHtml.append( "</ul>" );
+
+        return sbHtml.toString( );
     }
 
 }
