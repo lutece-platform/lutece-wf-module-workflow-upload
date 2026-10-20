@@ -10,10 +10,12 @@
             <@formGroup labelFor='maxSizeFile' labelKey='#i18n{module.workflow.upload.task_upload_config.label_size}' mandatory=true helpKey='#i18n{module.workflow.upload.task_upload_config.label_size_upload_inline}'>
                 <@input type='number' name='maxSizeFile' id='maxSizeFile' value='${(config.maxSizeFile)!0}' />
             </@formGroup>
-            <@formGroup labelKey='#i18n{module.workflow.upload.task_upload_config.label_mandatory}' mandatory=true helpKey='#i18n{module.workflow.upload.task_upload_config.label_mandatory_upload}'>
-                <@radioButton name='mandatory' value='true' labelKey='#i18n{module.workflow.upload.task_upload_config.label_yes}' orientation='inline' checked=(config?? && config.mandatory) />
-                <@radioButton name='mandatory' value='false' labelKey='#i18n{module.workflow.upload.task_upload_config.label_no}' orientation='inline' checked=(config?? && !config.mandatory) />
-            </@formGroup>
+            <#assign mandatoryLegend>#i18n{module.workflow.upload.task_upload_config.label_mandatory} <span class="text-danger">*</span></#assign>
+            <@fieldSet legend=mandatoryLegend legendClass='form-label' fieldsetParams={ 'aria-describedby': 'help_mandatory' }>
+                <@radioButton name='mandatory' id='mandatory_true' value='true' labelKey='#i18n{module.workflow.upload.task_upload_config.label_yes}' orientation='inline' mandatory=true checked=(config?? && config.mandatory) />
+                <@radioButton name='mandatory' id='mandatory_false' value='false' labelKey='#i18n{module.workflow.upload.task_upload_config.label_no}' orientation='inline' mandatory=true checked=(config?? && !config.mandatory) />
+                <p class="mb-0"><@formHelp labelFor='mandatory'>#i18n{module.workflow.upload.task_upload_config.label_mandatory_upload}</@formHelp></p>
+            </@fieldSet>
         </@fieldSet>
     </@columns>
 </@row>
