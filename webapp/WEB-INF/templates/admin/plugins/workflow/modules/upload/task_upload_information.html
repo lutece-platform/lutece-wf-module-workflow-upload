@@ -30,7 +30,7 @@
 <div>
   <div>
     <#if config.title?exists >
-      <label>${config.title} :</label>
+      <p class="fw-bold">${config.title} :</p>
     </#if>
   </div>
 
@@ -41,9 +41,7 @@
 
         <#if has_permission_delete >
           <div class="pull-right">
-            <a class="btn btn-danger btn-xs" href="#" data-workflow-upload-remove data-id-history="${id_history?c}" data-id-task="${task.id?c}" data-id-file-upload="${file_uploaded.idUploadFile?c}" title="#i18n{module.workflow.upload.button.remove_upload}">
-              <i class="fa fa-trash"></i>
-            </a>
+            <@button color='danger' size='sm' buttonIcon='trash' title='#i18n{module.workflow.upload.button.remove_upload}' hideTitle=['all'] params={ 'data-workflow-upload-remove': true, 'data-id-history': id_history?c, 'data-id-task': task.id?c, 'data-id-file-upload': file_uploaded.idUploadFile?c } />
           </div>
         </#if>
       </div>
