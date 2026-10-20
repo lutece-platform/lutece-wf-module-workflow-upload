@@ -17,7 +17,13 @@
                 <p></p>
             </subsection>
             <subsection name="Usage">
-                <p></p>
+                <p>
+                    Le marqueur <code>url_list</code> (fournisseur &#171; T&#233;l&#233;versements &#187;) donne les liens de
+                    t&#233;l&#233;chargement des fichiers d&#233;pos&#233;s par la t&#226;che de t&#233;l&#233;versement de l'action,
+                    sous forme de liste HTML. Les messages de notification &#233;chappent leurs marqueurs : &#233;crire
+                    <code>${richText(url_list!)}</code> dans un message HTML pour que la liste garde ses liens (les noms de
+                    fichier restent du texte).
+                </p>
             </subsection>
         </section>
     </body>
