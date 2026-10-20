@@ -1,19 +1,30 @@
 <#if config?exists && list_file_uploaded?has_content >
 <script>
-  function removeUploadValue(idHistory, idTask, idFileUpload) 
+  /* Remove buttons of the uploaded files: one listener for every task information of the page */
+  if ( !window.workflowUploadRemoveBound )
   {
-    const form = document.createElement('form');
-    form.action = 'jsp/admin/plugins/workflow/modules/upload/ConfirmRemoveUpload.jsp?' +
-                  'id_history=' + idHistory +
-                  '&id_task=' + idTask +
-                  '&id_file_upload=' + idFileUpload +
-                  '&return_url=' + encodeURIComponent(window.location.href);
-    form.method = 'post';
+    window.workflowUploadRemoveBound = true;
+    document.addEventListener( 'click', function ( event )
+    {
+      const button = event.target.closest( '[data-workflow-upload-remove]' );
+      if ( !button )
+      {
+        return;
+      }
+      event.preventDefault( );
+      const form = document.createElement('form');
+      form.action = 'jsp/admin/plugins/workflow/modules/upload/ConfirmRemoveUpload.jsp?' +
+                    'id_history=' + encodeURIComponent(button.dataset.idHistory) +
+                    '&id_task=' + encodeURIComponent(button.dataset.idTask) +
+                    '&id_file_upload=' + encodeURIComponent(button.dataset.idFileUpload) +
+                    '&return_url=' + encodeURIComponent(window.location.href);
+      form.method = 'post';
 
-    document.body.appendChild(form);
+      document.body.appendChild(form);
 
-    form.submit();
-    document.body.removeChild(form);
+      form.submit();
+      document.body.removeChild(form);
+    } );
   }
 </script>
 <div>
@@ -30,7 +41,7 @@
 
         <#if has_permission_delete >
           <div class="pull-right">
-            <a class="btn btn-danger btn-xs" href="#" onclick="removeUploadValue(${id_history}, ${task.id}, ${file_uploaded.idUploadFile});return false;" title="#i18n{module.workflow.upload.button.remove_upload}">
+            <a class="btn btn-danger btn-xs" href="#" data-workflow-upload-remove data-id-history="${id_history?c}" data-id-task="${task.id?c}" data-id-file-upload="${file_uploaded.idUploadFile?c}" title="#i18n{module.workflow.upload.button.remove_upload}">
               <i class="fa fa-trash"></i>
             </a>
           </div>
