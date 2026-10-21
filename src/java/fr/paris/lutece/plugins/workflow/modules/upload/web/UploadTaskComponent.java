@@ -58,6 +58,7 @@ import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.util.html.HtmlTemplate;
+import fr.paris.lutece.util.url.UrlItem;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -100,6 +101,10 @@ public class UploadTaskComponent extends AbstractTaskComponent
 
     // PARAMETERS
     private static final String PARAMETER_UPLOAD_VALUE = "upload_value";
+    private static final String PARAMETER_ID_TASK = "id_task";
+
+    // JSP
+    private static final String JSP_MODIFY_TASK = "jsp/admin/plugins/workflow/ModifyTask.jsp";
 
     // MESSAGES
     private static final String MESSAGE_VALIDATION_CONFIG_TITLE_REQUIRED = "module.workflow.upload.validation.taskuploadconfig.Title.notEmpty";
@@ -175,10 +180,27 @@ public class UploadTaskComponent extends AbstractTaskComponent
 
         if ( StringUtils.isNotBlank( strMessageError ) )
         {
-            return AdminMessageService.getMessageUrl( request, strMessageError, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, strMessageError, AdminMessage.TYPE_STOP, getJspModifyTask( request, config.getIdTask( ) ) );
         }
 
         return strMessageError;
+    }
+
+    /**
+     * Return the URL of the JSP modify task of the workflow plugin, on the configuration of the task
+     * 
+     * @param request
+     *            the request
+     * @param nIdTask
+     *            the id of the task
+     * @return the URL of the JSP modify task
+     */
+    private String getJspModifyTask( HttpServletRequest request, int nIdTask )
+    {
+        UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_MODIFY_TASK );
+        url.addParameter( PARAMETER_ID_TASK, nIdTask );
+
+        return url.getUrl( );
     }
 
     /**
