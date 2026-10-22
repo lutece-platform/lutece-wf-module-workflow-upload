@@ -61,6 +61,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
@@ -82,6 +84,10 @@ import jakarta.servlet.http.HttpServletRequest;
 public class UploadJspBean extends MVCAdminJspBean
 {
     /** Generated serial id. */
+    private static final String SCHEME_HTTP = "http";
+    private static final String SCHEME_HTTPS = "https";
+    private static final int PORT_HTTP = 80;
+    private static final int PORT_HTTPS = 443;
     private static final long serialVersionUID = 5300419950066235152L;
 
     /** The Constant PARAMETER_ID_HISTORY. */
@@ -247,12 +253,70 @@ public class UploadJspBean extends MVCAdminJspBean
      */
     String getSafeReturnUrl( HttpServletRequest request, String strReturnUrl )
     {
-        if ( StringUtils.isBlank( strReturnUrl ) || !SecurityUtil.isInternalRedirectUrlSafe( strReturnUrl, request ) )
+        if ( StringUtils.isBlank( strReturnUrl ) )
         {
             return AppPathService.getBaseUrl( request ) + AppPathService.getAdminMenuUrl( );
         }
+        if ( SecurityUtil.isInternalRedirectUrlSafe( strReturnUrl, request ) )
+        {
+            return strReturnUrl;
+        }
+        String strUrlWithDefaultPort = getUrlWithDefaultPort( strReturnUrl );
+        if ( strUrlWithDefaultPort != null && SecurityUtil.isInternalRedirectUrlSafe( strUrlWithDefaultPort, request ) )
+        {
+            return strUrlWithDefaultPort;
+        }
 
-        return strReturnUrl;
+        return AppPathService.getBaseUrl( request ) + AppPathService.getAdminMenuUrl( );
+    }
+
+    /**
+     * Gets an absolute URL written without port (the address of the browser) with the default port of its scheme written explicitly, as the base URL
+     * of the application writes it (https://host:443/context/... behind a proxy in https)
+     *
+     * @param strUrl
+     *            the URL
+     * @return the URL with the default port of its scheme, or null if it is not an absolute http(s) URL without port nor user information
+     */
+    private static String getUrlWithDefaultPort( String strUrl )
+    {
+        try
+        {
+            URI uri = new URI( strUrl );
+            if ( uri.getScheme( ) == null || uri.getHost( ) == null || uri.getPort( ) != -1 || uri.getRawUserInfo( ) != null )
+            {
+                return null;
+            }
+            int nPort = -1;
+            if ( SCHEME_HTTPS.equalsIgnoreCase( uri.getScheme( ) ) )
+            {
+                nPort = PORT_HTTPS;
+            }
+            else
+                if ( SCHEME_HTTP.equalsIgnoreCase( uri.getScheme( ) ) )
+                {
+                    nPort = PORT_HTTP;
+                }
+            if ( nPort == -1 )
+            {
+                return null;
+            }
+            StringBuilder sbUrl = new StringBuilder( uri.getScheme( ) ).append( "://" ).append( uri.getRawAuthority( ) ).append( ':' ).append( nPort )
+                    .append( StringUtils.defaultString( uri.getRawPath( ) ) );
+            if ( uri.getRawQuery( ) != null )
+            {
+                sbUrl.append( '?' ).append( uri.getRawQuery( ) );
+            }
+            if ( uri.getRawFragment( ) != null )
+            {
+                sbUrl.append( '#' ).append( uri.getRawFragment( ) );
+            }
+            return sbUrl.toString( );
+        }
+        catch( URISyntaxException e )
+        {
+            return null;
+        }
     }
 
     /**

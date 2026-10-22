@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.workflow.modules.upload.web;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -100,5 +101,39 @@ public class UploadJspBeanTest extends LuteceTestCase
         assertEquals( strAdminHome, _bean.getSafeReturnUrl( request, null ) );
         assertEquals( strInternalUrl, _bean.getSafeReturnUrl( request, strInternalUrl ) );
         assertEquals( "jsp/admin/plugins/forms/ManageForms.jsp", _bean.getSafeReturnUrl( request, "jsp/admin/plugins/forms/ManageForms.jsp" ) );
+    }
+
+    /**
+     * A return URL of the application written without the default port of its scheme (the address of the browser, https://host/context/...) is kept,
+     * although the base URL of the application carries the port (https://host:443/context/...)
+     */
+    @Test
+    public void testGetSafeReturnUrlWithoutDefaultHttpsPort( )
+    {
+        MockHttpServletRequest request = new MockHttpServletRequest( )
+        {
+            @Override
+            public String getScheme( )
+            {
+                return "https";
+            }
+
+            @Override
+            public int getServerPort( )
+            {
+                return 443;
+            }
+        };
+        request.setServerName( "p30.example" );
+        request.setContextPath( "/lutece" );
+        String strBaseUrl = AppPathService.getBaseUrl( request );
+        assertTrue( strBaseUrl.startsWith( "https://p30.example:443/" ), strBaseUrl );
+        String strBrowserUrl = strBaseUrl.replace( ":443/", "/" ) + "jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?id_form_response=1";
+
+        assertEquals( strBaseUrl + "jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?id_form_response=1",
+                _bean.getSafeReturnUrl( request, strBrowserUrl ) );
+        assertEquals( strBaseUrl + AppPathService.getAdminMenuUrl( ), _bean.getSafeReturnUrl( request, "https://p30.example:8443/lutece/jsp/admin/X.jsp" ) );
+        assertEquals( strBaseUrl + AppPathService.getAdminMenuUrl( ), _bean.getSafeReturnUrl( request, "http://p30.example/lutece/jsp/admin/X.jsp" ) );
+        assertEquals( strBaseUrl + AppPathService.getAdminMenuUrl( ), _bean.getSafeReturnUrl( request, "https://p30.example/other/jsp/admin/X.jsp" ) );
     }
 }
