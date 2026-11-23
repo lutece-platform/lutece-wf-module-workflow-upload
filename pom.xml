@@ -10,7 +10,7 @@
     <groupId>fr.paris.lutece.plugins</groupId>
     <artifactId>module-workflow-upload</artifactId>
     <packaging>lutece-plugin</packaging>
-    <version>1.1.8-SNAPSHOT</version>
+    <version>1.1.9-SNAPSHOT</version>
     <name>Lutece module workflow upload</name>
 
     <repositories>
